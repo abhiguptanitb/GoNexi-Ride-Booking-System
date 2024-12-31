@@ -45,7 +45,7 @@ const Home = () => {
     }, [ user ])
 
     socket.on('ride-confirmed', ride => {
-
+ 
 
         setVehicleFound(false)
         setWaitingForDriver(true)
@@ -184,16 +184,28 @@ const Home = () => {
     }
 
     async function createRide() {
-        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create`, {
-            pickup,
-            destination,
-            vehicleType
-        }, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create`, {
+                pickup,
+                destination,
+                vehicleType
+            }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            
+            // Handle the response
+            if (response.status === 200) {
+                // Assume the response contains ride data
+                setRide(response.data);
+                setWaitingForDriver(true); // Transition to waiting state
+                setVehicleFound(false); // Hide vehicle found panel
             }
-        })
-
+        } catch (error) {
+            console.error("Error creating ride:", error);
+            // Optionally show error to user
+        }
 
     }
 

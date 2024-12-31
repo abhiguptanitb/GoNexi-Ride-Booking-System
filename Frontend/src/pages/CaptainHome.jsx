@@ -59,9 +59,21 @@ const CaptainHome = () => {
 
     socket.on('new-ride', (data) => {
         console.log(data);
-        setRide(data)
-        setRidePopupPanel(true)
-
+        setRide(data);
+        setRidePopupPanel(true);
+        // if (data.vehicleType === captain.vehicleType) {
+        //     setRide(data);
+        //     setRidePopupPanel(true);
+        //     // Send captain details to the user
+        //     socket.emit('captain-details', {
+        //         captainId: captain._id,
+        //         captainName: captain.fullname,
+        //         vehicleType: captain.vehicleType,
+        //         vehiclePlate: captain.vehicle.plate
+        //     });
+        // } else {
+        //     setRidePopupPanel(false);
+        // }
     })
 
     async function confirmRide() {

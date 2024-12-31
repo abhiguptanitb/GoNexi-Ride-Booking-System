@@ -203,7 +203,7 @@ const Home = () => {
                 setVehicleFound(false); // Hide vehicle found panel
             }
         } catch (error) {
-            console.error("Error creating ride:", error);
+            console.error("Error creating ride:", error); 
             // Optionally show error to user
         }
 

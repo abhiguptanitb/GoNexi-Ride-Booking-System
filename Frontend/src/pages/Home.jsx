@@ -45,7 +45,7 @@ const Home = () => {
     }, [ user ])
 
     socket.on('ride-confirmed', ride => {
- 
+
 
         setVehicleFound(false)
         setWaitingForDriver(true)
@@ -139,7 +139,7 @@ const Home = () => {
                 transform: 'translateY(100%)'
             })
         }
-    }, [ confirmRidePanel ])
+    }, [ confirmRidePanel ])  
 
     useGSAP(function () {
         if (vehicleFound) {
@@ -276,11 +276,11 @@ const Home = () => {
                 <ConfirmRide
                     createRide={createRide}
                     pickup={pickup}
-                    destination={destination}
+                    destination={destination} 
                     fare={fare}
                     vehicleType={vehicleType}
 
-                    setConfirmRidePanel={setConfirmRidePanel} setVehicleFound={setVehicleFound} />
+                    setConfirmRidePanel={setConfirmRidePanel} setVehicleFound={setVehicleFound} />  
             </div>
             <div ref={vehicleFoundRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12'>
                 <LookingForDriver

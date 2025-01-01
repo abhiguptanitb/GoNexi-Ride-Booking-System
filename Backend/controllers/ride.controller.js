@@ -28,7 +28,7 @@ module.exports.createRide = async (req, res) => {
 
 
 
-        const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 1000);
+        const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 10000);
 
         // const allCaptains = await CaptainModel.find();
         // console.log(allCaptains);

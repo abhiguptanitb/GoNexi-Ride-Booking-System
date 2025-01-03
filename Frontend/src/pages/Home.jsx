@@ -12,6 +12,7 @@ import { SocketContext } from '../context/SocketContext';
 import { useContext } from 'react';
 import { UserDataContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import LiveTracking from '../components/LiveTracking';
 
 const Home = () => {
@@ -69,7 +70,7 @@ const Home = () => {
                 }
 
             })
-            setPickupSuggestions(response.data)
+            setPickupSuggestions(response.data) 
         } catch {
             // handle error
         }
@@ -209,13 +210,40 @@ const Home = () => {
 
     }
 
+    const handleLogout= async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/logout`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            localStorage.removeItem('token')
+            navigate('/login')
+        }
+        catch (error) {
+            console.error("Error logging out:", error); 
+            // Optionally show error to user
+        }
+    }
+
     return (
-        <div className='h-screen relative overflow-hidden'>
-            <img className='w-16 absolute left-5 top-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
+        <div className='h-screen relative overflow-hidden z-0'>
+            
+            {/* <img className='w-16 absolute left-5 top-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" /> */}
+            
+            
+            <div className='absolute p-6 top-0 flex items-center justify-between w-screen'>
+                <img className='w-16 z-20' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
+                <Link onClick={handleLogout} className=' h-10 w-10 z-20 bg-white flex items-center justify-center rounded-full'>
+                    <i className="text-lg font-medium ri-logout-box-r-line"></i>
+                </Link>
+            </div>
+            
             <div className='h-screen w-screen'>
                 {/* image for temporary use  */}
                 <LiveTracking />
             </div>
+
             <div className=' flex flex-col justify-end h-screen absolute top-0 w-full'>
                 <div className='h-[30%] p-6 bg-white relative'>
                     <h5 ref={panelCloseRef} onClick={() => {

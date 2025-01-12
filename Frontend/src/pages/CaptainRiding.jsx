@@ -43,23 +43,21 @@ const CaptainRiding = () => {
                 <LiveTracking />
             </div>
 
-            <div
-                className='h-[20%] p-6 flex items-center justify-between relative bg-yellow-400'
-                onClick={() => {
-                    setFinishRidePanel(true)
-                }}
-            >
-                <h5
-                    className='p-1 text-center w-[90%] absolute top-0'
-                    onClick={() => {}}
+            <div className='h-[20%] p-4 flex items-center justify-between relative bg-yellow-400 shadow-md rounded-t-lg'>
+                <div className='flex items-center gap-2'>
+                    <i className='text-3xl text-gray-800 ri-map-pin-line'></i>
+                    <div>
+                        <h4 className='text-lg font-bold text-gray-800'>Ride in Progress</h4>
+                    </div>
+                </div>
+                <button
+                    className='bg-green-600 hover:bg-green-700 transition-all duration-300 text-white font-semibold py-2 px-6 rounded-lg shadow'
+                    onClick={() => setFinishRidePanel(true)}
                 >
-                    <i className='text-3xl text-gray-800 ri-arrow-up-wide-line'></i>
-                </h5>
-                <h4 className='text-xl font-semibold'>{'4 KM away'}</h4>
-                <button className='bg-green-600 text-white font-semibold p-3 px-10 rounded-lg'>
                     Complete Ride
                 </button>
             </div>
+
 
             <div
                 ref={finishRidePanelRef}

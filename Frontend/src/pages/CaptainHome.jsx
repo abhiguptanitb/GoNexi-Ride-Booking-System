@@ -9,6 +9,7 @@ import { useEffect, useContext } from 'react'
 import { SocketContext } from '../context/SocketContext'
 import { CaptainDataContext } from '../context/CaptainContext'
 import axios from 'axios'
+import LiveTracking from '../components/LiveTracking'
 
 const CaptainHome = () => {
 
@@ -55,27 +56,13 @@ const CaptainHome = () => {
 
         const locationInterval = setInterval(updateLocation, 10000)
         updateLocation()
-
-        // return () => clearInterval(locationInterval)
+        
     }, [])
 
     socket.on('new-ride', (data) => {
         console.log(data);
         setRide(data);
         setRidePopupPanel(true);
-        // if (data.vehicleType === captain.vehicleType) {
-        //     setRide(data);
-        //     setRidePopupPanel(true);
-        //     // Send captain details to the user
-        //     socket.emit('captain-details', {
-        //         captainId: captain._id,
-        //         captainName: captain.fullname,
-        //         vehicleType: captain.vehicleType,
-        //         vehiclePlate: captain.vehicle.plate
-        //     });
-        // } else {
-        //     setRidePopupPanel(false);
-        // }
     })
 
     async function confirmRide() {
@@ -134,20 +121,24 @@ const CaptainHome = () => {
         }
         catch (error) {
             console.error("Error logging out:", error); 
-            // Optionally show error to user
         }
     }
 
     return (
         <div className='h-screen relative overflow-hidden z-0 w-full'>
-            <div className='fixed p-6 top-0 flex items-center justify-between w-screen'>
-                <img className='w-16' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
-                <Link onClick={handleLogout} className=' h-10 w-10 bg-white flex items-center justify-center rounded-full'>
-                    <i className="text-lg font-medium ri-logout-box-r-line"></i>
-                </Link>
-            </div>
+            {
+                !ridePopupPanel && !confirmRidePopupPanel ? (
+                    <div className='absolute p-6 top-0 flex items-center justify-between w-full'>
+                        <img className='w-16 z-20' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
+                        <Link onClick={handleLogout} className='h-10 w-10 z-20 bg-white flex items-center justify-center rounded-full'>
+                            <i className="text-lg font-medium ri-logout-box-r-line"></i>
+                        </Link>
+                    </div>
+                )
+                : null
+            }
             <div className='h-3/5'>
-                <img className='h-full w-full object-cover' src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif" alt="" />
+                <LiveTracking />
             </div>
             <div className='h-2/5 p-6'>
                 <CaptainDetails ride={ride} />

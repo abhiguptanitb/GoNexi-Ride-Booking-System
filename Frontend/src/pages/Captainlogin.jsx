@@ -37,7 +37,7 @@ const Captainlogin = () => {
     }
 
     return (
-        <div className='p-7 h-screen flex flex-col justify-between'>
+        <div className='p-7 h-screen flex flex-col justify-between mt-8'>
             <div>
                 <img className='w-20 mb-3' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="" />
 

@@ -7,7 +7,6 @@ import axios from "axios";
 const UserLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [userData, setUserData] = useState({});
 
     const { user, setUser } = useContext(UserDataContext);
     const navigate = useNavigate();
@@ -37,7 +36,7 @@ const UserLogin = () => {
     };
 
     return (
-    <div className="p-7 h-screen flex flex-col justify-between">
+    <div className="absolute p-7 h-screen flex flex-col justify-between mt-8">
         <div>
             <img
                 className="w-16 mb-10"

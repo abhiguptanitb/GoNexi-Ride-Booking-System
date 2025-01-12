@@ -100,7 +100,6 @@ const Home = () => {
             gsap.to(panelRef.current, {
                 height: '70%',
                 padding: 24
-                // opacity:1
             })
             gsap.to(panelCloseRef.current, {
                 opacity: 1
@@ -109,7 +108,6 @@ const Home = () => {
             gsap.to(panelRef.current, {
                 height: '0%',
                 padding: 0
-                // opacity:0
             })
             gsap.to(panelCloseRef.current, {
                 opacity: 0
@@ -168,6 +166,10 @@ const Home = () => {
 
 
     async function findTrip() {
+        if (!pickup || !destination) {
+            alert("Please enter both pickup and destination locations.");
+            return; 
+        }
         setVehiclePanel(true)
         setPanelOpen(false)
 
@@ -180,7 +182,6 @@ const Home = () => {
 
 
         setFare(response.data)
-
 
     }
 
@@ -198,14 +199,12 @@ const Home = () => {
             
             // Handle the response
             if (response.status === 200) {
-                // Assume the response contains ride data
                 setRide(response.data);
                 setWaitingForDriver(true); // Transition to waiting state
                 setVehicleFound(false); // Hide vehicle found panel
             }
         } catch (error) {
             console.error("Error creating ride:", error); 
-            // Optionally show error to user
         }
 
     }
@@ -222,30 +221,28 @@ const Home = () => {
         }
         catch (error) {
             console.error("Error logging out:", error); 
-            // Optionally show error to user
         }
     }
 
     return (
-        <div className='h-screen relative overflow-hidden z-0 w-full'>
+        <div className='h-screen relative overflow-hidden z-0 w-full'>            
             
-            {/* <img className='w-16 absolute left-5 top-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" /> */}
-            
-            
-            <div className='absolute p-6 top-0 flex items-center justify-between w-screen'>
-                <img className='w-16 z-20' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
-                <Link onClick={handleLogout} className=' h-10 w-10 z-20 bg-white flex items-center justify-center rounded-full'>
-                    <i className="text-lg font-medium ri-logout-box-r-line"></i>
-                </Link>
-            </div>
+            {!panelOpen && (
+                <div className='absolute p-6 top-0 flex items-center justify-between w-full'>
+                    <img className='w-16 z-20' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
+                    <Link onClick={handleLogout} className='h-10 w-10 z-20 bg-white flex items-center justify-center rounded-full'>
+                        <i className="text-lg font-medium ri-logout-box-r-line"></i>
+                    </Link>
+                </div>
+            )}
+
             
             <div className='h-screen w-screen'>
-                {/* image for temporary use  */}
                 <LiveTracking />
             </div>
 
-            <div className=' flex flex-col justify-end h-screen absolute top-0 w-full'>
-                <div className='h-[30%] p-6 bg-white relative'>
+            <div className=' flex flex-col justify-end h-full absolute top-0 w-full'>
+                <div className='h-[35%] p-6 bg-white relative'>
                     <h5 ref={panelCloseRef} onClick={() => {
                         setPanelOpen(false)
                     }} className='absolute opacity-0 right-6 top-6 text-2xl'>
@@ -295,37 +292,57 @@ const Home = () => {
                     />
                 </div>
             </div>
-            <div ref={vehiclePanelRef} className='w-full absolute z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12'>
-                <VehiclePanel 
-                    selectVehicle={setVehicleType}
-                    fare={fare} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
-            </div>
-            <div ref={confirmRidePanelRef} className='w-full absolute z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12'>
-                <ConfirmRide
-                    createRide={createRide}
-                    pickup={pickup}
-                    destination={destination} 
-                    fare={fare}
-                    vehicleType={vehicleType}
 
-                    setConfirmRidePanel={setConfirmRidePanel} setVehicleFound={setVehicleFound} />  
-            </div>
-            <div ref={vehicleFoundRef} className='w-full absolute z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12'>
-                <LookingForDriver
-                    createRide={createRide}
-                    pickup={pickup}
-                    destination={destination}
-                    fare={fare}
-                    vehicleType={vehicleType}
-                    setVehicleFound={setVehicleFound} />
-            </div>
-            <div ref={waitingForDriverRef} className='w-full absolute z-10 bottom-0  bg-white px-3 py-6 pt-12'>
-                <WaitingForDriver
-                    ride={ride}
-                    setVehicleFound={setVehicleFound}
-                    setWaitingForDriver={setWaitingForDriver}
-                    waitingForDriver={waitingForDriver} />
-            </div>
+            {
+                vehiclePanel && (
+                    <div ref={vehiclePanelRef} className='w-full absolute z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12'>
+                        <VehiclePanel 
+                            selectVehicle={setVehicleType}
+                            fare={fare} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
+                    </div>
+                )
+            }
+
+            {
+                confirmRidePanel && (
+                    <div ref={confirmRidePanelRef} className='w-full absolute z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12'>
+                        <ConfirmRide
+                            createRide={createRide}
+                            pickup={pickup}
+                            destination={destination} 
+                            fare={fare}
+                            vehicleType={vehicleType}
+
+                            setConfirmRidePanel={setConfirmRidePanel} setVehicleFound={setVehicleFound} />  
+                    </div>
+                )
+            }
+
+                {
+                    vehicleFound && (
+                        <div ref={vehicleFoundRef} className='w-full absolute z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12'>
+                            <LookingForDriver
+                                createRide={createRide}
+                                pickup={pickup}
+                                destination={destination}
+                                fare={fare}
+                                vehicleType={vehicleType}
+                                setVehicleFound={setVehicleFound} />
+                        </div>
+                    )
+                }
+
+            {
+                waitingForDriver && (
+                    <div ref={waitingForDriverRef} className='w-full absolute z-10 bottom-0  bg-white px-3 py-6 pt-12'>
+                        <WaitingForDriver
+                            ride={ride}
+                            setVehicleFound={setVehicleFound}
+                            setWaitingForDriver={setWaitingForDriver}
+                            waitingForDriver={waitingForDriver} />
+                    </div>
+                )
+            }
         </div>
     )
 }

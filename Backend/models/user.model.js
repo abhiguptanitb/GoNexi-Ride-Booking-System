@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 
@@ -37,11 +37,11 @@ userSchema.methods.generateAuthToken = function () {
 }
 
 userSchema.methods.comparePassword = async function (password) {
-    return await bcrypt.compare(password, this.password);
+    return await bcryptjs.compare(password, this.password);
 }
 
 userSchema.statics.hashPassword = async function (password) {
-    return await bcrypt.hash(password, 10);
+    return await bcryptjs.hash(password, 10);
 }
 
 const userModel = mongoose.model('user', userSchema);

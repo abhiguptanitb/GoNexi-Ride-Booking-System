@@ -30,5 +30,8 @@ router.get('/profile', authMiddleware.authCaptain, captainController.getCaptainP
 
 router.get('/logout', authMiddleware.authCaptain, captainController.logoutCaptain)
 
+router.get('/:captainId/vehicle/vehicleType', authMiddleware.authCaptain, captainController.getVehicleType);
+
+
 
 module.exports = router;

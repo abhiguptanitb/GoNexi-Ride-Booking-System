@@ -18,38 +18,44 @@ module.exports.createRide = async (req, res) => {
     const { userId, pickup, destination, vehicleType } = req.body;
 
     try {
-        const ride = await rideService.createRide({ user: req.user._id, pickup, destination, vehicleType });
-        res.status(201).json(ride);
+        const ride = await rideService.createRide({ 
+            user: req.user._id, 
+            pickup, 
+            destination, 
+            vehicleType 
+        });
 
+        // Fetch coordinates based on pickup location
         const pickupCoordinates = await mapService.getAddressCoordinate(pickup);
+        console.log(pickupCoordinates);
 
-        console.log(pickupCoordinates)
+        const captainsInRadius = await mapService.getCaptainsInTheRadius(
+            pickupCoordinates.ltd, 
+            pickupCoordinates.lng, 
+            10000
+        );
 
+        ride.otp = "";  // Assuming OTP generation
 
-
-        const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 10000);
-
-        ride.otp = ""
-
+        // Populate the ride with user info (for sending to captains)
         const rideWithUser = await rideModel.findOne({ _id: ride._id }).populate('user');
 
-        captainsInRadius.map(captain => {
-
-        
+        // Send ride info with vehicleType to all nearby captains
+        captainsInRadius.forEach(captain => {
             sendMessageToSocketId(captain.socketId, {
                 event: 'new-ride',
-                data: rideWithUser
-            })
+                data: { ...rideWithUser._doc, vehicleType }  // Send vehicleType explicitly
+            });
+        });
 
-        })
+        res.status(201).json(ride);  // Respond with the created ride
 
     } catch (err) {
-
         console.log(err);
         return res.status(500).json({ message: err.message });
     }
-
 };
+
 
 module.exports.getFare = async (req, res) => {
     const errors = validationResult(req);

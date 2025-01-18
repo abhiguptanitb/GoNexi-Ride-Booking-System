@@ -78,3 +78,19 @@ module.exports.logoutCaptain = async (req, res, next) => {
 
     res.status(200).json({ message: 'Logout successfully' });
 }
+
+module.exports.getVehicleType = async (req, res, next) => {
+    try {
+        const captain = req.captain;  // Captured from the auth middleware
+        if (!captain) {
+            return res.status(404).json({ message: "Captain not found" });
+        }
+
+        const vehicleType = captain.vehicle.vehicleType;
+
+        res.status(200).json({ vehicleType });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+};

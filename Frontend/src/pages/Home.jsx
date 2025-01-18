@@ -16,8 +16,8 @@ import { Link } from 'react-router-dom';
 import LiveTracking from '../components/LiveTracking';
 
 const Home = () => {
-    const [ pickup, setPickup ] = useState('')
-    const [ destination, setDestination ] = useState('')
+    const [ pickup, setPickup ] = useState(localStorage.getItem('pickup') || '')
+    const [ destination, setDestination ] = useState(localStorage.getItem('destination') || '')
     const [ panelOpen, setPanelOpen ] = useState(false)
     const vehiclePanelRef = useRef(null)
     const confirmRidePanelRef = useRef(null)
@@ -33,7 +33,7 @@ const Home = () => {
     const [ destinationSuggestions, setDestinationSuggestions ] = useState([])
     const [ activeField, setActiveField ] = useState(null)
     const [ fare, setFare ] = useState({})
-    const [ vehicleType, setVehicleType ] = useState(null)
+    const [ vehicleType, setVehicleType ] = useState(localStorage.getItem('vehicleType') || null)
     const [ ride, setRide ] = useState(null)
 
     const navigate = useNavigate()
@@ -41,13 +41,36 @@ const Home = () => {
     const { socket } = useContext(SocketContext)
     const { user } = useContext(UserDataContext)
 
+    const [liveTrackingZIndex, setLiveTrackingZIndex] = useState('z-1000');
+    const [panelZIndex, setPanelZIndex] = useState('z-[-10]');
+
     useEffect(() => {
-        socket.emit("join", { userType: "user", userId: user._id })
-    }, [ user ])
+        socket.emit("join", { 
+            userId: user._id,
+            userType: 'user'
+        });
+        const updateLocation = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    socket.emit('update-location-user', {
+                        userId: user._id,
+                        
+                        location: {
+                            ltd: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        },
+                    });
+                });
+            }
+        };
+
+        const locationInterval = setInterval(updateLocation, 10000);
+        updateLocation();
+
+        return () => clearInterval(locationInterval);
+    }, [ user, socket ]);
 
     socket.on('ride-confirmed', ride => {
-
-
         setVehicleFound(false)
         setWaitingForDriver(true)
         setRide(ride)
@@ -59,28 +82,38 @@ const Home = () => {
         navigate('/riding', { state: { ride } }) // Updated navigate to include ride data
     })
 
+    // Load pickup and destination from localStorage on component mount
+    useEffect(() => {
+        const storedPickup = localStorage.getItem('pickup');
+        const storedDestination = localStorage.getItem('destination');
+        if (storedPickup) setPickup(storedPickup);
+        if (storedDestination) setDestination(storedDestination);
+    }, [])
 
     const handlePickupChange = async (e) => {
-        setPickup(e.target.value)
+        const value = e.target.value;
+        setPickup(value);
+        localStorage.setItem('pickup', value);  // Save pickup to localStorage
         try {
             const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
-                params: { input: e.target.value },
+                params: { input: value },
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
-
             })
-            setPickupSuggestions(response.data) 
+            setPickupSuggestions(response.data)
         } catch {
             // handle error
         }
     }
 
     const handleDestinationChange = async (e) => {
-        setDestination(e.target.value)
+        const value = e.target.value;
+        setDestination(value);
+        localStorage.setItem('destination', value);  // Save destination to localStorage
         try {
             const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
-                params: { input: e.target.value },
+                params: { input: value },
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
@@ -94,6 +127,7 @@ const Home = () => {
     const submitHandler = (e) => {
         e.preventDefault()
     }
+
 
     useGSAP(function () {
         if (panelOpen) {
@@ -165,10 +199,10 @@ const Home = () => {
     }, [ waitingForDriver ])
 
 
-    async function findTrip() {
+    const findTrip = async () => {
         if (!pickup || !destination) {
             alert("Please enter both pickup and destination locations.");
-            return; 
+            return;
         }
         setVehiclePanel(true)
         setPanelOpen(false)
@@ -179,37 +213,32 @@ const Home = () => {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
-
-
         setFare(response.data)
-
     }
 
-    async function createRide() {
+    const createRide = async () => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create`, {
                 pickup,
                 destination,
-                vehicleType
+                vehicleType // Include vehicleType in the request
             }, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
-            // Handle the response
+
             if (response.status === 200) {
                 setRide(response.data);
-                setWaitingForDriver(true); // Transition to waiting state
-                setVehicleFound(false); // Hide vehicle found panel
+                setWaitingForDriver(true);
+                setVehicleFound(false);
             }
         } catch (error) {
-            console.error("Error creating ride:", error); 
+            console.error("Error creating ride:", error);
         }
-
     }
 
-    const handleLogout= async () => {
+    const handleLogout = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/logout`, {
                 headers: {
@@ -217,12 +246,24 @@ const Home = () => {
                 }
             })
             localStorage.removeItem('token')
+            localStorage.removeItem('pickup')  // Optionally clear the saved data on logout
+            localStorage.removeItem('destination')
+            localStorage.removeItem('vehicleType')
             navigate('/login')
-        }
-        catch (error) {
-            console.error("Error logging out:", error); 
+        } catch (error) {
+            console.error("Error logging out:", error);
         }
     }
+
+    useEffect(()=>{
+        if(panelOpen) {
+            setLiveTrackingZIndex('z-10');
+            setPanelZIndex('z-1000');
+        } else {
+            setLiveTrackingZIndex('z-1000');
+            setPanelZIndex('z-[-10]');
+        }
+    },[panelOpen])
 
     return (
         <div className='h-screen relative overflow-hidden z-0 w-full'>            
@@ -237,11 +278,11 @@ const Home = () => {
             )}
 
             
-            <div className='h-screen w-screen'>
+            <div className={`h-3/5 ${liveTrackingZIndex}`}>
                 <LiveTracking />
             </div>
 
-            <div className=' flex flex-col justify-end h-full absolute top-0 w-full'>
+            <div className={`flex flex-col justify-end absolute top-0 h-full w-full ${panelZIndex}`}>
                 <div className='h-[35%] p-6 bg-white relative'>
                     <h5 ref={panelCloseRef} onClick={() => {
                         setPanelOpen(false)
@@ -281,7 +322,7 @@ const Home = () => {
                         Find Trip
                     </button>
                 </div>
-                <div ref={panelRef} className='bg-white'>
+                <div ref={panelRef} className='bg-white z-10'>
                     <LocationSearchPanel
                         suggestions={activeField === 'pickup' ? pickupSuggestions : destinationSuggestions}
                         setPanelOpen={setPanelOpen}
@@ -339,7 +380,8 @@ const Home = () => {
                             ride={ride}
                             setVehicleFound={setVehicleFound}
                             setWaitingForDriver={setWaitingForDriver}
-                            waitingForDriver={waitingForDriver} />
+                            waitingForDriver={waitingForDriver} 
+                            vehicleType={vehicleType}/>                            
                     </div>
                 )
             }

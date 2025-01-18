@@ -1,19 +1,19 @@
 const axios = require('axios');
 const captainModel = require('../models/captain.model');
 
-module.exports.getAddressCoordinate = async (address) => {
-    const apiKey = process.env.GOOGLE_MAPS_API;
-    console.log(process.env.GOOGLE_MAPS_API);
-    const url = `https://maps.gomaps.pro/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
+const mapboxToken = process.env.MAPBOX_ACCESS_TOKEN;
 
-    try { 
+module.exports.getAddressCoordinate = async (address) => {
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxToken}`;
+
+    try {
         const response = await axios.get(url);
-        console.log('Google API Response:', response.data);
-        if (response.data.status === 'OK') {
-            const location = response.data.results[ 0 ].geometry.location;
+        console.log('Mapbox API Response:', response.data);
+        if (response.data.features && response.data.features.length > 0) {
+            const location = response.data.features[0].geometry.coordinates;
             return {
-                ltd: location.lat,
-                lng: location.lng
+                lng: location[0],
+                ltd: location[1],
             };
         } else {
             throw new Error('Unable to fetch coordinates');
@@ -22,54 +22,51 @@ module.exports.getAddressCoordinate = async (address) => {
         console.error(error);
         throw error;
     }
-}
+};
 
-module.exports.getDistanceTime = async (origin, destination) => {
-    if (!origin || !destination) {
+module.exports.getDistanceTime = async (originAddress, destinationAddress) => {
+    if (!originAddress || !destinationAddress) {
         throw new Error('Origin and destination are required');
     }
 
-    const apiKey = process.env.GOOGLE_MAPS_API;
-    console.log(process.env.GOOGLE_MAPS_API);
+    const origin = await module.exports.getAddressCoordinate(originAddress);
+    const destination = await module.exports.getAddressCoordinate(destinationAddress);
 
-    const url = `https://maps.gomaps.pro/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`;
+    const originCoords = `${origin.lng},${origin.ltd}`;
+    const destinationCoords = `${destination.lng},${destination.ltd}`;
+    console.log(originCoords,destinationCoords)
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${originCoords};${destinationCoords}?access_token=${mapboxToken}&overview=full`;
 
     try {
-
-
         const response = await axios.get(url);
-        console.log('Google API Response:', response.data);
-        if (response.data.status === 'OK') {
-
-            if (response.data.rows[ 0 ].elements[ 0 ].status === 'ZERO_RESULTS') {
-                throw new Error('No routes found');
-            }
-
-            return response.data.rows[ 0 ].elements[ 0 ];
+        console.log('Mapbox API Response:', response.data);
+        if (response.data.routes && response.data.routes.length > 0) {
+            const route = response.data.routes[0];
+            return {
+                distance: route.distance, // in meters
+                duration: route.duration, // in seconds
+            };
         } else {
-            throw new Error('Unable to fetch distance and time');
+            throw new Error('No routes found');
         }
-
     } catch (err) {
-        console.error(err);
+        // console.error(err);
         throw err;
     }
-}
+};
 
 module.exports.getAutoCompleteSuggestions = async (input) => {
     if (!input) {
-        throw new Error('query is required');
+        throw new Error('Query is required');
     }
 
-    const apiKey = process.env.GOOGLE_MAPS_API;
-    console.log(process.env.GOOGLE_MAPS_API);
-    const url = `https://maps.gomaps.pro/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${apiKey}`;
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(input)}.json?access_token=${mapboxToken}&autocomplete=true`;
 
     try {
         const response = await axios.get(url);
-        console.log('Google API Response:', response.data);
-        if (response.data.status === 'OK') {
-            return response.data.predictions.map(prediction => prediction.description).filter(value => value);
+        console.log('Mapbox API Response:', response.data);
+        if (response.data.features) {
+            return response.data.features.map(feature => feature.place_name).filter(value => value);
         } else {
             throw new Error('Unable to fetch suggestions');
         }
@@ -77,19 +74,17 @@ module.exports.getAutoCompleteSuggestions = async (input) => {
         console.error(err);
         throw err;
     }
-}
+};
 
 module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
-
     // radius in km
-
     const captains = await captainModel.find({
         location: {
             $geoWithin: {
-                $centerSphere: [ [ ltd, lng ], radius / 6371 ]
-            }
-        }
+                $centerSphere: [[lng, ltd], radius / 6371], // Note: longitude comes first in GeoJSON
+            },
+        },
     });
 
     return captains;
-}
+};

@@ -7,7 +7,7 @@ import { CaptainDataContext } from '../context/CaptainContext';
 const Captainlogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(''); // State to handle error messages
+    const [error, setError] = useState(''); 
 
     const { captain, setCaptain } = React.useContext(CaptainDataContext);
     const navigate = useNavigate();
@@ -31,7 +31,6 @@ const Captainlogin = () => {
 
             }
         } catch (err) {
-             // Handle error and set error message
             if (err.response && err.response.status === 401) {
                 setError("Invalid email or password. Please try again.");
             } else {
@@ -70,7 +69,6 @@ const Captainlogin = () => {
                         placeholder='password'
                     />
 
-                    {/* Display error message */}
                     {error && <p className='text-red-500 text-sm mb-4'>{error}</p>}
 
                     <button

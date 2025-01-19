@@ -76,12 +76,6 @@ const CaptainHome = () => {
         fetchVehicleType();
     }, []);
 
-    // useEffect(() => {
-    //     socket.on('new-ride', (data) => {
-    //         setRide({ ...data, vehicleType: data.vehicleType || vehicleType });
-    //         setRidePopupPanel(true);
-    //     });
-    // }, [socket, vehicleType]);
     useEffect(() => {
         socket.on('new-ride', (data) => {
             const isMatching = data.vehicleType === vehicleType;
@@ -178,7 +172,6 @@ const CaptainHome = () => {
 
     return (
         <div className="h-screen relative overflow-hidden z-0 w-full">
-            {/* {!ridePopupPanel && !confirmRidePopupPanel && ( */}
                 <div className="absolute p-6 top-0 flex items-center justify-between w-full">
                     <img
                         className="w-16 z-20"
@@ -192,7 +185,6 @@ const CaptainHome = () => {
                         <i className="text-lg font-medium ri-logout-box-r-line"></i>
                     </Link>
                 </div>
-            {/* )} */}
             <div className="h-3/5">
                 <LiveTracking />
             </div>
@@ -202,7 +194,7 @@ const CaptainHome = () => {
             {ride?.vehicleType === vehicleType && (
                 <div
                     ref={ridePopupPanelRef}
-                    className="absolute w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
+                    className="absolute w-full z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12"
                 >
                     <RidePopUp
                         ride={ride}
@@ -214,7 +206,7 @@ const CaptainHome = () => {
             )}
             <div
                 ref={confirmRidePopupPanelRef}
-                className="absolute w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
+                className="absolute w-full z-10 bottom-0 top-20 translate-y-full bg-white px-3 py-6 pt-12"
             >
                 <ConfirmRidePopUp
                     ride={ride}
@@ -224,7 +216,7 @@ const CaptainHome = () => {
             </div>
             <button
                 onClick={onFindRide}
-                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white py-3 px-6 rounded-lg"
+                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white py-3 px-6 rounded-lg z-1000"
             >
                 Find a Ride
             </button>

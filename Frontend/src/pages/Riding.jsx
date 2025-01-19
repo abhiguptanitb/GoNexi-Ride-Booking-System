@@ -5,6 +5,7 @@ import { SocketContext } from '../context/SocketContext'
 import { useNavigate } from 'react-router-dom'
 import LiveTracking from '../components/LiveTracking'
 
+
 const Riding = () => {
     const location = useLocation()
     const { ride } = location.state || {} // Retrieve ride data
@@ -17,8 +18,8 @@ const Riding = () => {
 
 
     return (
-        <div className='h-screen'>
-            <Link to='/home' className='fixed right-2 top-2 h-10 w-10 bg-white flex items-center justify-center rounded-full'>
+        <div className='h-screen relative overflow-hidden z-0 w-full'>
+            <Link to='/home' className='fixed top-3 ml-2 z-20 h-10 w-10 bg-white flex items-center justify-center rounded-full'>
                 <i className="text-lg font-medium ri-home-5-line"></i>
             </Link>
             <div className='h-1/2'>

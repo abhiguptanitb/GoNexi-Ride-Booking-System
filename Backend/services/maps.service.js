@@ -50,7 +50,7 @@ module.exports.getDistanceTime = async (originAddress, destinationAddress) => {
             throw new Error('No routes found');
         }
     } catch (err) {
-        // console.error(err);
+        console.error(err);
         throw err;
     }
 };

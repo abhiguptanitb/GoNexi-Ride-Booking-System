@@ -24,7 +24,7 @@ const CaptainSignup = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault()
-        setErrorMessage('') // Clear any previous error messages
+        setErrorMessage('') 
 
         const captainData = {
             fullname: {
@@ -50,7 +50,6 @@ const CaptainSignup = () => {
                 localStorage.setItem('token', data.token)
                 navigate('/captain-home')
 
-                // Clear form inputs
                 setEmail('')
                 setFirstName('')
                 setLastName('')

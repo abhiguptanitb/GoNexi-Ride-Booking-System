@@ -8,7 +8,7 @@ const UserSignup = () => {
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [error, setError] = useState(''); // State to hold error messages
+    const [error, setError] = useState(''); 
 
     const navigate = useNavigate();
 

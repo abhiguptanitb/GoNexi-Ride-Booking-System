@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
@@ -21,6 +20,9 @@ const FinishRide = (props) => {
         })
 
         if (response.status === 200) {
+            const token = localStorage.getItem('token');
+            localStorage.clear(); 
+            localStorage.setItem('token', token);
             navigate('/captain-home')
         }
 
@@ -68,8 +70,6 @@ const FinishRide = (props) => {
                     <button
                         onClick={endRide}
                         className='w-full mt-5 flex  text-lg justify-center bg-green-600 text-white font-semibold p-3 rounded-lg'>Finish Ride</button>
-
-
                 </div>
             </div>
         </div>

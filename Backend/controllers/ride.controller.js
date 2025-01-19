@@ -35,7 +35,7 @@ module.exports.createRide = async (req, res) => {
             10000
         );
 
-        ride.otp = "";  // Assuming OTP generation
+        ride.otp = "";  
 
         // Populate the ride with user info (for sending to captains)
         const rideWithUser = await rideModel.findOne({ _id: ride._id }).populate('user');
@@ -48,7 +48,7 @@ module.exports.createRide = async (req, res) => {
             });
         });
 
-        res.status(201).json(ride);  // Respond with the created ride
+        res.status(201).json(ride); 
 
     } catch (err) {
         console.log(err);

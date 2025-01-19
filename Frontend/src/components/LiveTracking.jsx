@@ -1,28 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Map, { Marker } from 'react-map-gl'; // Import Mapbox components
 import 'mapbox-gl/dist/mapbox-gl.css'; // Import Mapbox styles
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN; // Add your Mapbox access token in the environment variables
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const LiveTracking = () => {
     const [currentPosition, setCurrentPosition] = useState({
-        lat: 75.859207,
-        lng: 22.718886,
+        lat: 22.9734, // Updated initial lat/lng 
+        lng: 78.6569
     });
     const [viewState, setViewState] = useState({
-        longitude: currentPosition.lng,
-        latitude: currentPosition.lat,
+        longitude: 78.6569,
+        latitude: 22.9734,
         zoom: 13,
     });
+    const mapRef = useRef(null); // Use a ref to access the map instance
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((position) => {
             const { latitude, longitude } = position.coords;
-            console.log('Position updated:', latitude, longitude);
-            setCurrentPosition({
-                lat: latitude,
-                lng: longitude,
-            });
+            setCurrentPosition({ lat: latitude, lng: longitude });
             setViewState((prevState) => ({
                 ...prevState,
                 longitude,
@@ -32,10 +29,7 @@ const LiveTracking = () => {
 
         const watchId = navigator.geolocation.watchPosition((position) => {
             const { latitude, longitude } = position.coords;
-            setCurrentPosition({
-                lat: latitude,
-                lng: longitude,
-            });
+            setCurrentPosition({ lat: latitude, lng: longitude });
             setViewState((prevState) => ({
                 ...prevState,
                 longitude,
@@ -46,19 +40,22 @@ const LiveTracking = () => {
         return () => navigator.geolocation.clearWatch(watchId);
     }, []);
 
-    // Handle the movement of the map by the user
-    const handleMove = (evt) => {
-        setViewState(evt.viewState); // Update viewState with the new map position
+    // Ensure the map is resized after rendering
+    const handleMapLoad = () => {
+        if (mapRef.current) {
+            mapRef.current.resize();
+        }
     };
-    
 
     return (
         <Map
-            {...viewState} // Use the spread operator to update viewState dynamically
-            onMove={handleMove} // Update viewState when the user drags the map
+            {...viewState}
+            onMove={(evt) => setViewState(evt.viewState)}
             style={{ width: '100%', height: '100%' }}
             mapStyle="mapbox://styles/mapbox/streets-v11"
             mapboxAccessToken={MAPBOX_TOKEN}
+            onLoad={handleMapLoad} 
+            ref={mapRef}
         >
             <Marker longitude={currentPosition.lng} latitude={currentPosition.lat} />
         </Map>

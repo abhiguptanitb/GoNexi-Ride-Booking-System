@@ -7,7 +7,7 @@ import axios from "axios";
 const UserLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState(""); // State to manage error message
+    const [error, setError] = useState(""); 
 
     const { setUser } = useContext(UserDataContext);
     const navigate = useNavigate();
@@ -29,11 +29,10 @@ const UserLogin = () => {
             if (response.status === 200) {
                 const data = response.data;
                 setUser(data.user);
-                localStorage.setItem("token", data.token); // Save token to localStorage
+                localStorage.setItem("token", data.token); 
                 navigate("/home");
             }
         } catch (err) {
-            // Handle error and set error message
             if (err.response && err.response.status === 401) {
                 setError("Invalid email or password. Please try again.");
             } else {
@@ -76,8 +75,8 @@ const UserLogin = () => {
                     />
                     
                         {error && (
-                            <p className="text-red-500 mb-4">{error}</p> // Display error message
-                        )}
+                            <p className="text-red-500 mb-4">{error}</p>)
+                        }
 
                     <button className="bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base">
                         Login

@@ -18,6 +18,22 @@ const UserSignup = () => {
         e.preventDefault();
         setError(''); // Reset error before submission
 
+        if (firstName.length < 3) {
+            setError('First name must be at least 3 characters long.');
+            return;
+        }
+
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!email.match(emailPattern)) {
+            setError('Invalid email format.');
+            return;
+        }
+
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters long.');
+            return;
+        }
+
         const newUser = {
             fullname: {
                 firstname: firstName,

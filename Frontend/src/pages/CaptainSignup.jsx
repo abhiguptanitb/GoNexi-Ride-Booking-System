@@ -26,6 +26,42 @@ const CaptainSignup = () => {
         e.preventDefault()
         setErrorMessage('') 
 
+        if (firstName.length < 3) {
+            setErrorMessage('First name must be at least 3 characters long.');
+            return;
+        }
+
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!email.match(emailPattern)) {
+            setErrorMessage('Invalid email format.');
+            return;
+        }
+
+        if (password.length < 6) {
+            setErrorMessage('Password must be at least 6 characters long.');
+            return;
+        }
+
+        if (vehicleColor.length < 3) {
+            setErrorMessage('Vehicle color must be at least 3 characters long.');
+            return;
+        }
+
+        if (vehiclePlate.length < 3) {
+            setErrorMessage('Vehicle plate must be at least 3 characters long.');
+            return;
+        }
+
+        if (vehicleCapacity <= 0) {
+            setErrorMessage('Vehicle capacity must be at least 1.');
+            return;
+        }
+
+        if (!['car', 'auto', 'moto'].includes(vehicleType)) {
+            setErrorMessage('Invalid vehicle type.');
+            return;
+        }
+
         const captainData = {
             fullname: {
                 firstname: firstName,

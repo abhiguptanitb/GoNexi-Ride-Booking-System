@@ -41,6 +41,8 @@ const CaptainSignup = () => {
             }
         }
 
+
+
         try {
             const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`, captainData)
 
@@ -49,6 +51,7 @@ const CaptainSignup = () => {
                 setCaptain(data.captain)
                 localStorage.setItem('token', data.token)
                 navigate('/captain-home')
+            }
 
                 setEmail('')
                 setFirstName('')
@@ -58,7 +61,7 @@ const CaptainSignup = () => {
                 setVehiclePlate('')
                 setVehicleCapacity('')
                 setVehicleType('')
-            }
+
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 setErrorMessage('Captain already exists. Please try logging in.')
@@ -155,7 +158,7 @@ const CaptainSignup = () => {
                             <option value="" disabled>Select Vehicle Type</option>
                             <option value="car">Car</option>
                             <option value="auto">Auto</option>
-                            <option value="moto">Moto</option>
+                            <option value="motorcycle">Moto</option>
                         </select>
                     </div>
 

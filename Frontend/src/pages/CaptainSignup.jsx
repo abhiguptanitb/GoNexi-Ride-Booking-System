@@ -20,7 +20,7 @@ const CaptainSignup = () => {
 
     const [errorMessage, setErrorMessage] = useState('')
 
-    const { captain, setCaptain } = React.useContext(CaptainDataContext)
+    const { setCaptain } = React.useContext(CaptainDataContext) //when you are not importing the hooks individually
 
     const submitHandler = async (e) => {
         e.preventDefault()
@@ -110,9 +110,7 @@ const CaptainSignup = () => {
     return (
         <div className='py-2 px-5 h-screen flex flex-col justify-between'>
             <div>
-                <img className='w-20' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="" />
-
-                
+                <img className='w-20' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="" />                
 
                 <form onSubmit={submitHandler}>
 

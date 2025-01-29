@@ -39,6 +39,4 @@ router.post('/end-ride',
     rideController.endRide
 )
 
-
-
 module.exports = router;

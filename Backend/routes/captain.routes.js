@@ -17,7 +17,6 @@ router.post('/register', [
     captainController.registerCaptain
 )
 
-
 router.post('/login', [
     body('email').isEmail().withMessage('Invalid Email'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
@@ -25,13 +24,10 @@ router.post('/login', [
     captainController.loginCaptain
 )
 
-
 router.get('/profile', authMiddleware.authCaptain, captainController.getCaptainProfile)
 
 router.get('/logout', authMiddleware.authCaptain, captainController.logoutCaptain)
 
 router.get('/:captainId/vehicle/vehicleType', authMiddleware.authCaptain, captainController.getVehicleType);
-
-
 
 module.exports = router;

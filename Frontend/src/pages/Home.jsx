@@ -149,7 +149,6 @@ const Home = () => {
         }
     }, [ panelOpen ])
 
-
     useGSAP(function () {
         if (vehiclePanel) {
             gsap.to(vehiclePanelRef.current, {

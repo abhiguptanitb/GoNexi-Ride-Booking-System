@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import FinishRide from '../components/FinishRide'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
@@ -26,7 +26,7 @@ const CaptainRiding = () => {
 
     return (
         <div className='relative h-screen flex flex-col w-full'>
-            <div className='fixed top-0 p-6 flex items-center justify-between  z-20'>
+            <div className='fixed top-0 p-6 flex items-center justify-between z-20'>
                 <img
                     className='w-16'
                     src='https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png'

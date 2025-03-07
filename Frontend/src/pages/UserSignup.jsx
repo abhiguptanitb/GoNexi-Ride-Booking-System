@@ -18,8 +18,12 @@ const UserSignup = () => {
         e.preventDefault();
         setError(''); // Reset error before submission
 
-        if (firstName.length < 3) {
-            setError('First name must be at least 3 characters long.');
+        if (firstName.length < 2) {
+            setError('First name must be at least 2 characters long.');
+            return;
+        }
+        if (lastName.length < 2) {
+            setError('Last name must be at least 2 characters long.');
             return;
         }
 

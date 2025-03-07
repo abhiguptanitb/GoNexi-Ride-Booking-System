@@ -15,7 +15,7 @@ module.exports.createRide = async (req, res) => {
         return res.status(401).json({ message: "User not authenticated" });
     }
 
-    const { userId, pickup, destination, vehicleType } = req.body;
+    const { pickup, destination, vehicleType } = req.body;
 
     try {
         const ride = await rideService.createRide({ 
@@ -136,11 +136,9 @@ module.exports.endRide = async (req, res) => {
             event: 'ride-ended',
             data: ride
         })
-
-
-
+        
         return res.status(200).json(ride);
     } catch (err) {
         return res.status(500).json({ message: err.message });
-    } s
+    } 
 }

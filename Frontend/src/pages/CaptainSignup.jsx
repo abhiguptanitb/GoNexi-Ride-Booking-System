@@ -26,8 +26,12 @@ const CaptainSignup = () => {
         e.preventDefault()
         setErrorMessage('') 
 
-        if (firstName.length < 3) {
-            setErrorMessage('First name must be at least 3 characters long.');
+        if (firstName.length < 2) {
+            setErrorMessage('First name must be at least 2 characters long.');
+            return;
+        }
+        if (lastName.length < 2) {
+            setErrorMessage('Last name must be at least 2 characters long.');
             return;
         }
 

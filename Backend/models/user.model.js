@@ -8,11 +8,12 @@ const userSchema = new mongoose.Schema({
         firstname: {
             type: String,
             required: true,
-            minlength: [ 3, 'First name must be at least 3 characters long' ],
+            minlength: [ 2, 'First name must be at least 2 characters long' ],
         },
         lastname: {
             type: String,
-            minlength: [ 3, 'Last name must be at least 3 characters long' ],
+            required: true,
+            minlength: [ 2, 'Last name must be at least 2 characters long' ],
         }
     },
     email: {
@@ -20,6 +21,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
         lowercase: true,
+        match: [ /^\S+@\S+\.\S+$/, 'Please enter a valid email' ],
         minlength: [ 5, 'Email must be at least 5 characters long' ],
     },
     password: {

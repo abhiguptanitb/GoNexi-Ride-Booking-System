@@ -1,227 +1,240 @@
-import React, { useRef, useState, useEffect, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import CaptainDetails from '../components/CaptainDetails';
-import RidePopUp from '../components/RidePopUp';
-import ConfirmRidePopUp from '../components/ConfirmRidePopUp';
-import LiveTracking from '../components/LiveTracking';
-import { SocketContext } from '../context/SocketContext';
-import { CaptainDataContext } from '../context/CaptainContext';
-import axios from 'axios';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
+import { useRef, useState, useEffect, useContext } from "react"
+import { useNavigate, Link } from "react-router-dom"
+import CaptainDetails from "../components/CaptainDetails"
+import RidePopUp from "../components/RidePopUp"
+import ConfirmRidePopUp from "../components/ConfirmRidePopUp"
+import LiveTracking from "../components/LiveTracking"
+import { SocketContext } from "../context/SocketContext"
+import { CaptainDataContext } from "../context/CaptainContext"
+import axios from "axios"
+import { useGSAP } from "@gsap/react"
+import gsap from "gsap"
+import { useLocationPermission } from "../hooks/useLocationPermission"
 
 const CaptainHome = () => {
-    const [ridePopupPanel, setRidePopupPanel] = useState(false);
-    const [confirmRidePopupPanel, setConfirmRidePopupPanel] = useState(false);
-    const [vehicleType, setVehicleType] = useState(null);
-    const ridePopupPanelRef = useRef(null);
-    const confirmRidePopupPanelRef = useRef(null);
-    const [ride, setRide] = useState(null);
+  const [ridePopupPanel, setRidePopupPanel] = useState(false)
+  const [confirmRidePopupPanel, setConfirmRidePopupPanel] = useState(false)
+  const [vehicleType, setVehicleType] = useState(null)
+  const ridePopupPanelRef = useRef(null)
+  const confirmRidePopupPanelRef = useRef(null)
+  const [ride, setRide] = useState(null)
 
-    const { socket } = useContext(SocketContext);
-    const { captain } = useContext(CaptainDataContext);
+  const { socket } = useContext(SocketContext)
+  const { captain } = useContext(CaptainDataContext)
+  const { permissionStatus, requestLocationPermission, currentLocation } = useLocationPermission()
 
-    const navigate = useNavigate();
+  const navigate = useNavigate()
 
-    useEffect(() => {
-        socket.emit('join', {
-            userId: captain._id,
-            userType: 'captain',
-        });
+  // Auto-request location permission on component mount
+  useEffect(() => {
+    const initializeLocation = async () => {
+      try {
+        console.log("🚗 Initializing location for captain...")
+        await requestLocationPermission()
+      } catch (error) {
+        console.error("Failed to get initial location:", error)
+        // Just continue without showing popup
+      }
+    }
 
-        const updateLocation = () => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                    socket.emit('update-location-captain', {
-                        userId: captain._id,
-                        location: {
-                            ltd: position.coords.latitude,
-                            lng: position.coords.longitude,
-                        },
-                    });
-                });
-            }
-        };
+    initializeLocation()
+  }, [requestLocationPermission])
 
-        const locationInterval = setInterval(updateLocation, 10000);
-        updateLocation();
+  // Handle location updates from LiveTracking component
+  const handleLocationUpdate = (location) => {
+    console.log("📍 Captain location updated:", location)
 
-        return () => clearInterval(locationInterval);
-    }, [captain, socket]);
+    // Send location to server via socket
+    socket.emit("update-location-captain", {
+      userId: captain._id,
+      location: location,
+    })
+  }
 
-    const fetchVehicleType = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                console.error('No token found in localStorage');
-                return;
-            }
+  // Socket setup and location tracking
+  useEffect(() => {
+    socket.emit("join", {
+      userId: captain._id,
+      userType: "captain",
+    })
 
-            const response = await axios.get(
-                `${import.meta.env.VITE_BASE_URL}/captains/${captain._id}/vehicle/vehicleType`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+    // Set up periodic location updates if we have permission
+    let locationInterval
+    if (permissionStatus === "granted" && currentLocation) {
+      locationInterval = setInterval(() => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const locationData = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              }
 
-            setVehicleType(response.data.vehicleType);
-        } catch (error) {
-            console.error('Error fetching vehicle type:', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchVehicleType();
-    }, []);
-
-    useEffect(() => {
-        socket.on('new-ride', (data) => {
-            const isMatching = data.vehicleType === vehicleType;
-            setRide({ ...data, vehicleType: data.vehicleType || vehicleType });
-            setRidePopupPanel(isMatching);
-        });
-    
-        // Clean up listener
-        return () => {
-            socket.off('new-ride');
-        };
-    }, [socket, vehicleType]);
-    
-
-    const confirmRide = async () => {
-        await axios.post(
-            `${import.meta.env.VITE_BASE_URL}/rides/confirm`,
-            {
-                rideId: ride._id,
-                captainId: captain._id,
+              socket.emit("update-location-captain", {
+                userId: captain._id,
+                location: locationData,
+              })
+            },
+            (error) => {
+              console.error("Error in periodic captain location update:", error)
             },
             {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            }
-        );
-
-        setRidePopupPanel(false);
-        setConfirmRidePopupPanel(true);
-    };
-
-    const onFindRide = () => {
-        if (ride?.vehicleType === vehicleType) {
-            setRidePopupPanel(true);
-        } else {
-            setRidePopupPanel(false); // Reset if not matching
+              enableHighAccuracy: false,
+              timeout: 5000,
+              maximumAge: 60000,
+            },
+          )
         }
-    };
-    
+      }, 30000) // Update every 30 seconds
+    }
 
-    useGSAP(() => {
-        gsap.to(ridePopupPanelRef.current, {
-            transform: ridePopupPanel ? 'translateY(0)' : 'translateY(100%)',
-        });
-    }, [ridePopupPanel]);
+    return () => {
+      if (locationInterval) {
+        clearInterval(locationInterval)
+      }
+    }
+  }, [captain, socket, permissionStatus, currentLocation])
 
-    useGSAP(() => {
-        gsap.to(confirmRidePopupPanelRef.current, {
-            transform: confirmRidePopupPanel ? 'translateY(0)' : 'translateY(100%)',
-        });
-    }, [confirmRidePopupPanel]);
+  const fetchVehicleType = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        console.error("No token found in localStorage")
+        return
+      }
 
-    const saveStateToLocalStorage = () => {
-        const state = {
-            ridePopupPanel,
-            confirmRidePopupPanel,
-            ride,
-            vehicleType,
-        };
-        localStorage.setItem('captainHomeState', JSON.stringify(state));
-    };
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/captains/${captain._id}/vehicle/vehicleType`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
-    useEffect(() => {
-        const savedState = localStorage.getItem('captainHomeState');
-        if (savedState) {
-            const { ridePopupPanel, confirmRidePopupPanel, ride, vehicleType } = JSON.parse(savedState);
-            setRidePopupPanel(ridePopupPanel);
-            setConfirmRidePopupPanel(confirmRidePopupPanel);
-            setRide(ride);
-            setVehicleType(vehicleType);
-        }
-    }, []);
+      setVehicleType(response.data.vehicleType)
+      console.log("🚗 Captain vehicle type:", response.data.vehicleType)
+    } catch (error) {
+      console.error("Error fetching vehicle type:", error)
+    }
+  }
 
-    useEffect(() => {
-        saveStateToLocalStorage();
-    }, [ridePopupPanel, confirmRidePopupPanel, ride, vehicleType]);
-    
+  useEffect(() => {
+    fetchVehicleType()
+  }, [])
 
-    const handleLogout = async () => {
-        try {
-            await axios.get(`${import.meta.env.VITE_BASE_URL}/users/logout`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            localStorage.removeItem('token');
-            localStorage.removeItem('captainHomeState'); // Clear saved state
-            navigate('/login');
-        } catch (error) {
-            console.error('Error logging out:', error);
-        }
-    };
+  useEffect(() => {
+    socket.on("new-ride", (data) => {
+      console.log("🔔 New ride received:", data)
+      const isMatching = data.vehicleType === vehicleType
+      console.log("🔍 Vehicle type match:", {
+        rideVehicleType: data.vehicleType,
+        captainVehicleType: vehicleType,
+        isMatching,
+      })
 
-    return (
-        <div className="h-screen relative overflow-hidden z-0 w-full">
-                <div className="absolute p-6 top-0 flex items-center justify-between w-full">
-                    <img
-                        className="w-16 z-20"
-                        src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
-                        alt=""
-                    />
-                    <Link
-                        onClick={handleLogout}
-                        className="h-10 w-10 z-20 bg-white flex items-center justify-center rounded-full"
-                    >
-                        <i className="text-lg font-medium ri-logout-box-r-line"></i>
-                    </Link>
-                </div>
-            <div className="h-3/5">
-                <LiveTracking />
-            </div>
-            <div className="h-2/5 p-6">
-                <CaptainDetails ride={ride} vehicleType={vehicleType} />
-            </div>
-            {ride?.vehicleType === vehicleType && (
-                <div
-                    ref={ridePopupPanelRef}
-                    className="absolute w-full z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12"
-                >
-                    <RidePopUp
-                        ride={ride}
-                        setRidePopupPanel={setRidePopupPanel}
-                        setConfirmRidePopupPanel={setConfirmRidePopupPanel}
-                        confirmRide={confirmRide}
-                    />
-                </div>
-            )}
-            <div
-                ref={confirmRidePopupPanelRef}
-                className="absolute w-full z-10 bottom-0 top-20 translate-y-full bg-white px-3 py-6 pt-12"
-            >
-                <ConfirmRidePopUp
-                    ride={ride}
-                    setConfirmRidePopupPanel={setConfirmRidePopupPanel}
-                    setRidePopupPanel={setRidePopupPanel}
-                />
-            </div>
-            <button
-                onClick={onFindRide}
-                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white py-3 px-6 rounded-lg z-1000"
-            >
-                Find a Ride
-            </button>
+      setRide({ ...data, vehicleType: data.vehicleType || vehicleType })
+      setRidePopupPanel(isMatching)
+    })
+
+    return () => {
+      socket.off("new-ride")
+    }
+  }, [socket, vehicleType])
+
+  const confirmRide = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/rides/confirm`,
+        {
+          rideId: ride._id,
+          captainId: captain._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      )
+
+      setRidePopupPanel(false)
+      setConfirmRidePopupPanel(true)
+      console.log("✅ Ride confirmed")
+    } catch (error) {
+      console.error("❌ Error confirming ride:", error)
+    }
+  }
+
+  useGSAP(() => {
+    gsap.to(ridePopupPanelRef.current, {
+      transform: ridePopupPanel ? "translateY(0)" : "translateY(100%)",
+    })
+  }, [ridePopupPanel])
+
+  useGSAP(() => {
+    gsap.to(confirmRidePopupPanelRef.current, {
+      transform: confirmRidePopupPanel ? "translateY(0)" : "translateY(100%)",
+    })
+  }, [confirmRidePopupPanel])
+
+  const handleLogout = async () => {
+    try {
+      await axios.get(`${import.meta.env.VITE_BASE_URL}/captains/logout`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      localStorage.removeItem("token")
+      navigate("/captain-login")
+    } catch (error) {
+      console.error("Error logging out:", error)
+    }
+  }
+
+  return (
+    <div className="h-screen relative overflow-hidden z-0 w-full">
+      <div className="absolute p-6 top-0 flex items-center justify-between w-full">
+        <img
+          className="w-16 z-20"
+          src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
+          alt=""
+        />
+        <Link onClick={handleLogout} className="h-10 w-10 z-20 bg-white flex items-center justify-center rounded-full">
+          <i className="text-lg font-medium ri-logout-box-r-line"></i>
+        </Link>
+      </div>
+
+      <div className="h-3/5">
+        <LiveTracking onLocationUpdate={handleLocationUpdate} />
+      </div>
+
+      <div className="h-2/5 p-6">
+        <CaptainDetails ride={ride} vehicleType={vehicleType} />
+      </div>
+
+      {ride?.vehicleType === vehicleType && (
+        <div
+          ref={ridePopupPanelRef}
+          className="absolute w-full z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12"
+        >
+          <RidePopUp
+            ride={ride}
+            setRidePopupPanel={setRidePopupPanel}
+            setConfirmRidePopupPanel={setConfirmRidePopupPanel}
+            confirmRide={confirmRide}
+          />
         </div>
-    );
-};
+      )}
 
-export default CaptainHome;
+      <div
+        ref={confirmRidePopupPanelRef}
+        className="absolute w-full z-10 bottom-0 top-20 translate-y-full bg-white px-3 py-6 pt-12"
+      >
+        <ConfirmRidePopUp
+          ride={ride}
+          setConfirmRidePopupPanel={setConfirmRidePopupPanel}
+          setRidePopupPanel={setRidePopupPanel}
+        />
+      </div>
+    </div>
+  )
+}
+
+export default CaptainHome

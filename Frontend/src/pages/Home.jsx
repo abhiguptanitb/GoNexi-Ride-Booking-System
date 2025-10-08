@@ -51,12 +51,12 @@ const Home = () => {
   useEffect(() => {
     const initializeLocation = async () => {
       try {
-        console.log("🎯 Initializing location for user...")
+        // console.log("🎯 Initializing location for user...")
         const result = await requestLocationPermission()
 
         // Auto-fill pickup if not already set or if it was previously set from current location
         if (result.address && (!pickup || isPickupFromCurrentLocation)) {
-          console.log("📍 Auto-filling pickup with current location:", result.address)
+          // console.log("📍 Auto-filling pickup with current location:", result.address)
           setPickup(result.address)
           setIsPickupFromCurrentLocation(true)
           localStorage.setItem("pickup", result.address)
@@ -84,7 +84,7 @@ const Home = () => {
 
   // Handle location updates from LiveTracking component
   const handleLocationUpdate = async (location) => {
-    console.log("📍 Location updated in Home:", location)
+    // console.log("📍 Location updated in Home:", location)
 
     // Send location to server via socket
     socket.emit("update-location-user", {
@@ -97,7 +97,7 @@ const Home = () => {
       try {
         const result = await updateLocation(location.lat, location.lng)
         if (result.address) {
-          console.log("🔄 Updating pickup with new current location:", result.address)
+          // console.log("🔄 Updating pickup with new current location:", result.address)
           setPickup(result.address)
           localStorage.setItem("pickup", result.address)
         }
@@ -154,14 +154,14 @@ const Home = () => {
   // Socket event listeners
   useEffect(() => {
     socket.on("ride-confirmed", (ride) => {
-      console.log("🚗 Ride confirmed:", ride)
+      // console.log("🚗 Ride confirmed:", ride)
       setVehicleFound(false)
       setWaitingForDriver(true)
       setRide(ride)
     })
 
     socket.on("ride-started", (ride) => {
-      console.log("🚀 Ride started:", ride)
+      // console.log("🚀 Ride started:", ride)
       setWaitingForDriver(false)
       navigate("/riding", { state: { ride } })
     })
@@ -330,7 +330,7 @@ const Home = () => {
       )
 
       if (response.status === 201) {
-        console.log("✅ Ride created successfully:", response.data)
+        // console.log("✅ Ride created successfully:", response.data)
         setRide(response.data)
         setVehicleFound(true)
         setConfirmRidePanel(false)
@@ -372,13 +372,17 @@ const Home = () => {
   return (
     <div className="h-screen relative overflow-hidden z-0 w-full">
       <div className="absolute p-6 top-0 flex items-center justify-between w-full">
-        <img
-          className="w-16 z-20"
-          src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
-          alt=""
-        />
-        <Link onClick={handleLogout} className="h-10 w-10 z-20 bg-white flex items-center justify-center rounded-full">
-          <i className="text-lg font-medium ri-logout-box-r-line"></i>
+        <div className="flex items-center space-x-3 z-20">
+          <div className="w-12 h-12 bg-gonexi-gradient rounded-xl flex items-center justify-center shadow-gonexi">
+            <span className="text-white font-bold text-xl">G</span>
+          </div>
+          <div>
+            <h1 className="text-white text-lg font-bold">GoNexi</h1>
+            <p className="text-white/80 text-xs">Fast & Reliable</p>
+          </div>
+        </div>
+        <Link onClick={handleLogout} className="h-10 w-10 z-20 bg-white/90 backdrop-blur-sm flex items-center justify-center rounded-full shadow-gonexi hover:shadow-gonexi-lg transition-all duration-200">
+          <i className="text-lg font-medium ri-logout-box-r-line text-gray-700"></i>
         </Link>
       </div>
 
@@ -433,8 +437,8 @@ const Home = () => {
             />
           </form>
 
-          <button onClick={findTrip} className="bg-black text-white px-4 py-2 rounded-lg mt-3 w-full">
-            Find Trip
+          <button onClick={findTrip} className="bg-gonexi-gradient text-white px-4 py-3 rounded-xl mt-4 w-full font-semibold shadow-gonexi hover:shadow-gonexi-lg transform hover:scale-105 transition-all duration-200">
+            Find Your Ride
           </button>
         </div>
         <div ref={panelRef} className="bg-white z-10">

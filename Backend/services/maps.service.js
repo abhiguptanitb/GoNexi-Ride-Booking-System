@@ -22,9 +22,9 @@ module.exports.getAddressCoordinate = async (address) => {
         console.error(error)
         throw error
     }
-    }
+}
 
-    module.exports.getDistanceTime = async (originAddress, destinationAddress) => {
+module.exports.getDistanceTime = async (originAddress, destinationAddress) => {
     if (!originAddress || !destinationAddress) {
         throw new Error("Origin and destination are required")
     }
@@ -54,9 +54,9 @@ module.exports.getAddressCoordinate = async (address) => {
         console.error(err)
         throw err
     }
-    }
+}
 
-    module.exports.getAutoCompleteSuggestions = async (input) => {
+module.exports.getAutoCompleteSuggestions = async (input) => {
     if (!input) {
         throw new Error("Query is required")
     }
@@ -75,9 +75,9 @@ module.exports.getAddressCoordinate = async (address) => {
         console.error(err)
         throw err
     }
-    }
+}
 
-    module.exports.getCaptainsInTheRadius = async (lat, lng, radius) => {
+module.exports.getCaptainsInTheRadius = async (lat, lng, radius) => {
     // radius in km
     const captains = await captainModel.find({
         location: {

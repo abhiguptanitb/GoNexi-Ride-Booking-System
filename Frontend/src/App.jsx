@@ -33,23 +33,27 @@ const App = () => {
             <UserProtectWrapper>
               <Home />
             </UserProtectWrapper>
-          } />
+          } 
+        />
         <Route path='/user/logout'
           element={<UserProtectWrapper>
             <UserLogout />
           </UserProtectWrapper>
-          } />
+          } 
+        />
         <Route path='/captain-home' element={
           <CaptainProtectWrapper>
             <CaptainHome />
           </CaptainProtectWrapper>
 
-        } />
+          }
+        />
         <Route path='/captain/logout' element={
           <CaptainProtectWrapper>
             <CaptainLogout />
           </CaptainProtectWrapper>
-        } />
+          }
+        />
       </Routes>
     </div>
   )

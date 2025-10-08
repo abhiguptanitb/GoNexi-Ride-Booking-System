@@ -2,53 +2,77 @@ import React from 'react'
 
 const ConfirmRide = (props) => {
     return (
-        <div>
-            <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
+        <div className="bg-white rounded-t-3xl shadow-gonexi-lg">
+            <div className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
                 props.setConfirmRidePanel(false)
-            }}><i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i></h5>
-            <h3 className='text-2xl font-semibold mb-5'>Confirm your Ride</h3>
+            }}>
+                <i className="text-3xl text-gray-400 ri-arrow-down-wide-line"></i>
+            </div>
+            
+            <div className="pt-8 pb-6 px-6">
+                <h3 className='text-2xl font-bold mb-6 text-gray-800'>Confirm Your Ride</h3>
 
-            <div className='flex gap-2 justify-between flex-col items-center'>
-                    {
-                        props.vehicleType === 'car' ? (
-                            <img className='h-20' src="https://swyft.pl/wp-content/uploads/2023/05/how-many-people-can-a-uberx-take.jpg" alt="" />
+                <div className='flex gap-4 justify-between flex-col items-center'>
+                    {/* Vehicle Icon */}
+                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-gonexi-lg mb-4">
+                        {props.vehicleType === 'car' ? (
+                            <div className="w-20 h-20 bg-gonexi-gradient rounded-2xl flex items-center justify-center">
+                                <i className="ri-car-line text-white text-3xl"></i>
+                            </div>
                         ) : props.vehicleType === 'moto' ? (
-                            <img className='h-20' src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_638,w_956/v1649231091/assets/2c/7fa194-c954-49b2-9c6d-a3b8601370f5/original/Uber_Moto_Orange_312x208_pixels_Mobile.png" alt="" />
+                            <div className="w-20 h-20 bg-gonexi-secondary rounded-2xl flex items-center justify-center">
+                                <i className="ri-motorbike-line text-white text-3xl"></i>
+                            </div>
                         ) : (
-                            <img className='h-20' src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1648431773/assets/1d/db8c56-0204-4ce4-81ce-56a11a07fe98/original/Uber_Auto_558x372_pixels_Desktop.png" alt="" />
-                        )
-                    }
+                            <div className="w-20 h-20 bg-gonexi-accent rounded-2xl flex items-center justify-center">
+                                <i className="ri-truck-line text-white text-3xl"></i>
+                            </div>
+                        )}
+                    </div>
 
-                
-                <div className='w-full mt-5'>
-                    <div className='flex items-center gap-5 p-3 border-b-2'>
-                        <i className="ri-map-pin-user-fill"></i>
-                        <div>
-                            <h3 className='text-lg font-medium'>Pickup</h3>
-                            <p className='text-sm -mt-1 text-gray-600'>{props.pickup}</p>
+                    <div className='w-full space-y-4'>
+                        <div className='flex items-center gap-4 p-4 bg-gray-50 rounded-xl'>
+                            <div className="w-10 h-10 bg-gonexi-primary rounded-lg flex items-center justify-center">
+                                <i className="ri-map-pin-user-fill text-white"></i>
+                            </div>
+                            <div>
+                                <h3 className='text-lg font-semibold text-gray-800'>Pickup Location</h3>
+                                <p className='text-sm text-gray-600'>{props.pickup}</p>
+                            </div>
+                        </div>
+                        
+                        <div className='flex items-center gap-4 p-4 bg-gray-50 rounded-xl'>
+                            <div className="w-10 h-10 bg-gonexi-secondary rounded-lg flex items-center justify-center">
+                                <i className="ri-map-pin-2-fill text-white"></i>
+                            </div>
+                            <div>
+                                <h3 className='text-lg font-semibold text-gray-800'>Destination</h3>
+                                <p className='text-sm text-gray-600'>{props.destination}</p>
+                            </div>
+                        </div>
+                        
+                        <div className='flex items-center gap-4 p-4 bg-gray-50 rounded-xl'>
+                            <div className="w-10 h-10 bg-gonexi-accent rounded-lg flex items-center justify-center">
+                                <i className="ri-currency-line text-white"></i>
+                            </div>
+                            <div>
+                                <h3 className='text-lg font-semibold text-gray-800'>₹{props.fare[props.vehicleType]}</h3>
+                                <p className='text-sm text-gray-600'>Cash Payment</p>
+                            </div>
                         </div>
                     </div>
-                    <div className='flex items-center gap-5 p-3 border-b-2'>
-                        <i className="text-lg ri-map-pin-2-fill"></i>
-                        <div>
-                            <h3 className='text-lg font-medium'>Destination</h3>
-                            <p className='text-sm -mt-1 text-gray-600'>{props.destination}</p>
-                        </div>
-                    </div>
-                    <div className='flex items-center gap-5 p-3'>
-                        <i className="ri-currency-line"></i>
-                        <div>
-                            <h3 className='text-lg font-medium'>₹{props.fare[ props.vehicleType ]}</h3>
-                            <p className='text-sm -mt-1 text-gray-600'>Cash</p>
-                        </div>
-                    </div>
+                    
+                    <button 
+                        onClick={() => {
+                            props.setVehicleFound(true)
+                            props.setConfirmRidePanel(false)
+                            props.createRide()
+                        }} 
+                        className='w-full mt-6 mb-4 bg-gonexi-gradient text-white font-semibold py-4 rounded-2xl shadow-gonexi hover:shadow-gonexi-lg transform hover:scale-105 transition-all duration-200'
+                    >
+                        Confirm Ride
+                    </button>
                 </div>
-                <button onClick={() => {
-                    props.setVehicleFound(true)
-                    props.setConfirmRidePanel(false)
-                    props.createRide()
-
-                }} className='w-full mt-5 mb-8 bg-green-600 text-white font-semibold p-2 rounded-lg'>Confirm</button>
             </div>
         </div>
     )

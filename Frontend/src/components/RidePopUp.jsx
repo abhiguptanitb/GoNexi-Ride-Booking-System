@@ -2,54 +2,84 @@ import React from 'react'
 
 const RidePopUp = (props) => {
     return (
-        <div>
-            <h5 className='p-1 text-center w-[93%] absolute top-0 z-[-10]' onClick={() => {
+        <div className="bg-white rounded-t-3xl shadow-gonexi-lg">
+            <div className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
                 props.setRidePopupPanel(false)
-            }}><i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i></h5>
-            <h3 className='text-2xl font-semibold mb-5'>New Ride Available!</h3>
-            <div className='flex items-center justify-between p-3 bg-yellow-400 rounded-lg mt-4'>
-                <div className='flex items-center gap-3 '>
-                <i className="ri-user-line rounded-full object-cover w-8 h-8 pl-2 pt-1 bg-slate-400"></i>
-                    <h2 className='text-lg font-medium'>{props.ride?.user.fullname.firstname + " " + props.ride?.user.fullname.lastname}</h2>
-                </div>
+            }}>
+                <i className="text-3xl text-gray-400 ri-arrow-down-wide-line"></i>
             </div>
-            <div className='flex gap-2 justify-between flex-col items-center'>
-                <div className='w-full mt-5'>
-                    <div className='flex items-center gap-5 p-3 border-b-2'>
-                        <i className="ri-map-pin-user-fill"></i>
+            
+            <div className="pt-8 pb-6 px-6">
+                <div className="text-center mb-6">
+                    <div className="w-16 h-16 bg-gonexi-gradient rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i className="ri-car-line text-white text-2xl"></i>
+                    </div>
+                    <h3 className='text-2xl font-bold text-gray-800 mb-2'>New Ride Available!</h3>
+                    <p className="text-gray-600">A passenger needs a ride</p>
+                </div>
+
+                {/* Passenger Info */}
+                <div className='flex items-center justify-between p-4 bg-gonexi-gradient rounded-2xl mb-6'>
+                    <div className='flex items-center gap-3'>
+                        <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                            <i className="ri-user-line text-white text-lg"></i>
+                        </div>
                         <div>
-                            <h3 className='text-lg font-medium'>Pickup</h3>
-                            <p className='text-sm -mt-1 text-gray-600'>{props.ride?.pickup}</p>
+                            <h2 className='text-lg font-semibold text-white'>{props.ride?.user.fullname.firstname + " " + props.ride?.user.fullname.lastname}</h2>
+                            <p className="text-white/80 text-sm">Passenger</p>
                         </div>
                     </div>
-                    <div className='flex items-center gap-5 p-3 border-b-2'>
-                        <i className="text-lg ri-map-pin-2-fill"></i>
+                    <div className="text-right">
+                        <h3 className='text-xl font-bold text-white'>₹{props.ride?.fare}</h3>
+                        <p className="text-white/80 text-sm">Fare</p>
+                    </div>
+                </div>
+
+                {/* Ride Details */}
+                <div className='space-y-4 mb-6'>
+                    <div className='flex items-center gap-4 p-4 bg-gray-50 rounded-xl'>
+                        <div className="w-10 h-10 bg-gonexi-primary rounded-lg flex items-center justify-center">
+                            <i className="ri-map-pin-user-fill text-white"></i>
+                        </div>
                         <div>
-                            <h3 className='text-lg font-medium'>Destination</h3>
-                            <p className='text-sm -mt-1 text-gray-600'>{props.ride?.destination}</p>
+                            <h3 className='text-lg font-semibold text-gray-800'>Pickup Location</h3>
+                            <p className='text-sm text-gray-600'>{props.ride?.pickup}</p>
                         </div>
                     </div>
-                    <div className='flex items-center gap-5 p-3'>
-                        <i className="ri-currency-line"></i>
+                    
+                    <div className='flex items-center gap-4 p-4 bg-gray-50 rounded-xl'>
+                        <div className="w-10 h-10 bg-gonexi-secondary rounded-lg flex items-center justify-center">
+                            <i className="ri-map-pin-2-fill text-white"></i>
+                        </div>
                         <div>
-                            <h3 className='text-lg font-medium'>₹{props.ride?.fare} </h3>
-                            <p className='text-sm -mt-1 text-gray-600'>Cash</p>
+                            <h3 className='text-lg font-semibold text-gray-800'>Destination</h3>
+                            <p className='text-sm text-gray-600'>{props.ride?.destination}</p>
                         </div>
                     </div>
                 </div>
-                <div className='mt-5 w-full '>
-                    <button onClick={() => {
-                        props.setConfirmRidePopupPanel(true)
-                        props.confirmRide()
 
-                    }} className=' bg-green-600 w-full text-white font-semibold p-2 px-10 rounded-lg'>Accept</button>
+                {/* Action Buttons */}
+                <div className='space-y-3'>
+                    <button 
+                        onClick={() => {
+                            props.setConfirmRidePopupPanel(true)
+                            props.confirmRide()
+                        }} 
+                        className='w-full bg-gonexi-gradient text-white font-semibold py-4 rounded-2xl shadow-gonexi hover:shadow-gonexi-lg transform hover:scale-105 transition-all duration-200'
+                    >
+                        <i className="ri-check-line mr-2"></i>
+                        Accept Ride
+                    </button>
 
-                    <button onClick={() => {
-                        props.setRidePopupPanel(false)
-
-                    }} className='mt-2 w-full bg-gray-300 text-gray-700 font-semibold p-2 px-10 rounded-lg'>Ignore</button>
-
-
+                    <button 
+                        onClick={() => {
+                            props.setRidePopupPanel(false)
+                        }} 
+                        className='w-full bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl hover:bg-gray-300 transition-all duration-200'
+                    >
+                        <i className="ri-close-line mr-2"></i>
+                        Decline
+                    </button>
                 </div>
             </div>
         </div>

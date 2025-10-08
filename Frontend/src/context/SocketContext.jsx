@@ -8,11 +8,11 @@ const socket = io(`${import.meta.env.VITE_BASE_URL}`); // Replace with your serv
 const SocketProvider = ({ children }) => {
     useEffect(() => {
         socket.on('connect', () => {
-            console.log('Connected to server');
+            // console.log('Connected to server');
         });
 
         socket.on('disconnect', () => {
-            console.log('Disconnected from server');
+            // console.log('Disconnected from server');
         });
 
     }, []);

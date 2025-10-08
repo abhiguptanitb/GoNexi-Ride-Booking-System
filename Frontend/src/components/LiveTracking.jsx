@@ -32,7 +32,7 @@ const LiveTracking = ({ onLocationUpdate }) => {
         setPermissionStatus(permission.state)
 
         permission.onchange = () => {
-          console.log("📍 Permission changed to:", permission.state)
+          // console.log("📍 Permission changed to:", permission.state)
           setPermissionStatus(permission.state)
         }
       }
@@ -43,7 +43,7 @@ const LiveTracking = ({ onLocationUpdate }) => {
 
   // Use default location when permission is denied
   const useDefaultLocation = () => {
-    console.log("🌍 Using default location (New Delhi)")
+    // console.log("🌍 Using default location (New Delhi)")
     const newViewState = {
       longitude: DEFAULT_LOCATION.lng,
       latitude: DEFAULT_LOCATION.lat,
@@ -73,10 +73,10 @@ const LiveTracking = ({ onLocationUpdate }) => {
 
     autoRetryIntervalRef.current = setInterval(() => {
       if (navigator.geolocation && permissionStatus !== "denied") {
-        console.log("🔄 Auto-checking for location permission...")
+        // console.log("🔄 Auto-checking for location permission...")
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            console.log("✅ Location permission granted automatically!")
+            // console.log("✅ Location permission granted automatically!")
             const { latitude, longitude } = position.coords
             const newPosition = { lat: latitude, lng: longitude }
             const newViewState = {
@@ -100,7 +100,7 @@ const LiveTracking = ({ onLocationUpdate }) => {
           },
           (error) => {
             // Silently continue with default location
-            console.log("📍 Still using default location")
+            // console.log("📍 Still using default location")
           },
           {
             enableHighAccuracy: false,
@@ -134,12 +134,12 @@ const LiveTracking = ({ onLocationUpdate }) => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords
-        console.log("🎯 Location obtained:", {
-          latitude,
-          longitude,
-          accuracy: position.coords.accuracy,
-          attempt: retryCount + 1,
-        })
+        // console.log("🎯 Location obtained:", {
+        //   latitude,
+        //   longitude,
+        //   accuracy: position.coords.accuracy,
+        //   attempt: retryCount + 1,
+        // })
 
         const newPosition = { lat: latitude, lng: longitude }
         const newViewState = {
@@ -180,7 +180,7 @@ const LiveTracking = ({ onLocationUpdate }) => {
 
     switch (error.code) {
       case error.PERMISSION_DENIED:
-        console.log("❌ Location permission denied, using default location")
+        // console.log("❌ Location permission denied, using default location")
         setUsingDefaultLocation(true)
         useDefaultLocation()
         return
@@ -205,7 +205,7 @@ const LiveTracking = ({ onLocationUpdate }) => {
     if (retryCount < 5) {
       // Max 5 retries
       const delay = Math.min(1000 * Math.pow(2, retryCount), 10000) // 1s, 2s, 4s, 8s, 10s
-      console.log(`🔄 Retrying location in ${delay}ms (attempt ${retryCount + 1})`)
+      // console.log(`🔄 Retrying location in ${delay}ms (attempt ${retryCount + 1})`)
 
       retryTimeoutRef.current = setTimeout(() => {
         setRetryCount((prev) => prev + 1)
@@ -222,12 +222,12 @@ const LiveTracking = ({ onLocationUpdate }) => {
     watchIdRef.current = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords
-        console.log("📍 Location updated:", {
-          latitude,
-          longitude,
-          accuracy: position.coords.accuracy,
-          timestamp: new Date().toLocaleTimeString(),
-        })
+        // console.log("📍 Location updated:", {
+        //   latitude,
+        //   longitude,
+        //   accuracy: position.coords.accuracy,
+        //   timestamp: new Date().toLocaleTimeString(),
+        // })
 
         const newPosition = { lat: latitude, lng: longitude }
         setCurrentPosition(newPosition)
@@ -301,23 +301,24 @@ const LiveTracking = ({ onLocationUpdate }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#f8f9fa",
+          background: "linear-gradient(135deg, #f0f9ff 0%, #fdf2f8 100%)",
           flexDirection: "column",
         }}
       >
         <div
           style={{
-            width: "50px",
-            height: "50px",
-            border: "4px solid #e3e3e3",
-            borderTop: "4px solid #007cba",
+            width: "60px",
+            height: "60px",
+            border: "4px solid #e0e7ff",
+            borderTop: "4px solid #6366f1",
             borderRadius: "50%",
             animation: "spin 1s linear infinite",
             marginBottom: "20px",
+            boxShadow: "0 4px 12px rgba(99, 102, 241, 0.2)",
           }}
         ></div>
-        <p style={{ fontSize: "16px", color: "#666", marginBottom: "10px" }}>Getting your location...</p>
-        <p style={{ fontSize: "12px", color: "#999" }}>Attempt {retryCount + 1} of 5</p>
+        <p style={{ fontSize: "16px", color: "#4b5563", marginBottom: "10px", fontWeight: "500" }}>Getting your location...</p>
+        <p style={{ fontSize: "12px", color: "#9ca3af" }}>Attempt {retryCount + 1} of 5</p>
         <style jsx>{`
           @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -338,30 +339,53 @@ const LiveTracking = ({ onLocationUpdate }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#f8f9fa",
+          background: "linear-gradient(135deg, #f0f9ff 0%, #fdf2f8 100%)",
           padding: "20px",
         }}
       >
         <div style={{ textAlign: "center", maxWidth: "300px" }}>
-          <i className="ri-map-pin-line" style={{ fontSize: "48px", color: "#dc3545", marginBottom: "15px" }}></i>
-          <h3 style={{ color: "#dc3545", marginBottom: "10px" }}>Location Required</h3>
-          <p style={{ color: "#666", marginBottom: "20px", lineHeight: "1.4" }}>{error}</p>
+          <div style={{ 
+            width: "80px", 
+            height: "80px", 
+            background: "linear-gradient(135deg, #6366f1 0%, #ec4899 100%)", 
+            borderRadius: "50%", 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "center", 
+            margin: "0 auto 20px",
+            boxShadow: "0 8px 25px rgba(99, 102, 241, 0.3)"
+          }}>
+            <i className="ri-map-pin-line" style={{ fontSize: "32px", color: "white" }}></i>
+          </div>
+          <h3 style={{ color: "#1f2937", marginBottom: "10px", fontWeight: "600" }}>Location Required</h3>
+          <p style={{ color: "#6b7280", marginBottom: "20px", lineHeight: "1.4" }}>{error}</p>
 
           {permissionStatus === "denied" ? (
             <div>
-              <p style={{ fontSize: "14px", color: "#999", marginBottom: "15px" }}>
+              <p style={{ fontSize: "14px", color: "#9ca3af", marginBottom: "15px" }}>
                 Please enable location permissions in your browser settings and refresh the page.
               </p>
               <button
                 onClick={() => window.location.reload()}
                 style={{
-                  background: "#007cba",
+                  background: "linear-gradient(135deg, #6366f1 0%, #ec4899 100%)",
                   color: "white",
                   border: "none",
                   padding: "12px 24px",
-                  borderRadius: "6px",
+                  borderRadius: "12px",
                   cursor: "pointer",
                   fontSize: "14px",
+                  fontWeight: "500",
+                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 6px 20px rgba(99, 102, 241, 0.4)";
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "0 4px 12px rgba(99, 102, 241, 0.3)";
                 }}
               >
                 Refresh Page
@@ -371,13 +395,24 @@ const LiveTracking = ({ onLocationUpdate }) => {
             <button
               onClick={retryLocation}
               style={{
-                background: "#007cba",
+                background: "linear-gradient(135deg, #6366f1 0%, #ec4899 100%)",
                 color: "white",
                 border: "none",
                 padding: "12px 24px",
-                borderRadius: "6px",
+                borderRadius: "12px",
                 cursor: "pointer",
                 fontSize: "14px",
+                fontWeight: "500",
+                boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
+                transition: "all 0.2s ease",
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow = "0 6px 20px rgba(99, 102, 241, 0.4)";
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 4px 12px rgba(99, 102, 241, 0.3)";
               }}
             >
               Try Again
@@ -398,10 +433,25 @@ const LiveTracking = ({ onLocationUpdate }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#f8f9fa",
+          background: "linear-gradient(135deg, #f0f9ff 0%, #fdf2f8 100%)",
         }}
       >
-        <p>Initializing map...</p>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ 
+            width: "60px", 
+            height: "60px", 
+            background: "linear-gradient(135deg, #6366f1 0%, #ec4899 100%)", 
+            borderRadius: "50%", 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "center", 
+            margin: "0 auto 15px",
+            boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
+          }}>
+            <i className="ri-map-2-line" style={{ fontSize: "24px", color: "white" }}></i>
+          </div>
+          <p style={{ color: "#6b7280", fontWeight: "500" }}>Initializing map...</p>
+        </div>
       </div>
     )
   }
@@ -420,26 +470,42 @@ const LiveTracking = ({ onLocationUpdate }) => {
         <Marker longitude={currentPosition.lng} latitude={currentPosition.lat}>
           <div
             style={{
-              width: "20px",
-              height: "20px",
+              width: "24px",
+              height: "24px",
               borderRadius: "50%",
-              background: "#007cba",
-              border: "3px solid white",
-              boxShadow: "0 0 0 3px rgba(0, 124, 186, 0.3)",
+              background: "linear-gradient(135deg, #6366f1 0%, #ec4899 100%)",
+              border: "4px solid white",
+              boxShadow: "0 0 0 4px rgba(99, 102, 241, 0.3), 0 4px 12px rgba(99, 102, 241, 0.4)",
               animation: "pulse 2s infinite",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
+            <div
+              style={{
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background: "white",
+                animation: "innerPulse 1.5s infinite",
+              }}
+            ></div>
             <style jsx>{`
               @keyframes pulse {
                 0% {
-                  box-shadow: 0 0 0 0 rgba(0, 124, 186, 0.7);
+                  box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7), 0 4px 12px rgba(99, 102, 241, 0.4);
                 }
                 70% {
-                  box-shadow: 0 0 0 10px rgba(0, 124, 186, 0);
+                  box-shadow: 0 0 0 12px rgba(99, 102, 241, 0), 0 4px 12px rgba(99, 102, 241, 0.4);
                 }
                 100% {
-                  box-shadow: 0 0 0 0 rgba(0, 124, 186, 0);
+                  box-shadow: 0 0 0 0 rgba(99, 102, 241, 0), 0 4px 12px rgba(99, 102, 241, 0.4);
                 }
+              }
+              @keyframes innerPulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.3; }
               }
             `}</style>
           </div>
@@ -453,26 +519,31 @@ const LiveTracking = ({ onLocationUpdate }) => {
           top: "10px",
           left: "10px",
           background: "rgba(255,255,255,0.95)",
-          padding: "8px 12px",
-          borderRadius: "6px",
+          backdropFilter: "blur(10px)",
+          padding: "12px 16px",
+          borderRadius: "12px",
           fontSize: "12px",
           zIndex: 1000,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1), 0 0 0 1px rgba(99, 102, 241, 0.1)",
+          border: "1px solid rgba(99, 102, 241, 0.2)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <div
             style={{
-              width: "8px",
-              height: "8px",
+              width: "10px",
+              height: "10px",
               borderRadius: "50%",
-              background: usingDefaultLocation ? "#ffc107" : "#28a745",
+              background: usingDefaultLocation ? "linear-gradient(135deg, #f59e0b 0%, #f97316 100%)" : "linear-gradient(135deg, #10b981 0%, #059669 100%)",
               animation: "blink 1s infinite",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
             }}
           ></div>
-          <span>{usingDefaultLocation ? "Default Location" : "Live Location"}</span>
+          <span style={{ fontWeight: "500", color: "#374151" }}>
+            {usingDefaultLocation ? "Default Location" : "Live Location"}
+          </span>
         </div>
-        <div style={{ fontSize: "10px", color: "#666", marginTop: "2px" }}>
+        <div style={{ fontSize: "10px", color: "#6b7280", marginTop: "4px", fontFamily: "monospace" }}>
           {currentPosition.lat.toFixed(6)}, {currentPosition.lng.toFixed(6)}
         </div>
         <style jsx>{`

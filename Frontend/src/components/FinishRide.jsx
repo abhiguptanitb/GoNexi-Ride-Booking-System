@@ -29,32 +29,34 @@ const FinishRide = (props) => {
         <div>
             <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
                 props.setFinishRidePanel(false)
-            }}><i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i></h5>
+            }}><i className="text-3xl text-gray-400 ri-arrow-down-wide-line"></i></h5>
             <h3 className='text-2xl font-semibold mb-5'>Finish this Ride</h3>
-            <div className='flex items-center justify-between p-4 border-2 border-yellow-400 rounded-lg mt-4'>
+            <div className='flex items-center justify-between p-4 border-2 border-gonexi-accent rounded-lg mt-4 bg-gonexi-accent/10'>
                 <div className='flex items-center gap-3 '>
-                <i className="ri-user-line rounded-full object-cover w-8 h-8 pl-2 pt-1 bg-slate-400"></i>
+                <div className="w-8 h-8 bg-gonexi-gradient rounded-full flex items-center justify-center">
+                    <i className="ri-user-line text-white text-sm"></i>
+                </div>
                     <h2 className='text-lg font-medium'>{props.ride?.user.fullname.firstname}</h2>
                 </div>
             </div>
             <div className='flex gap-2 justify-between flex-col items-center'>
                 <div className='w-full mt-5'>
                     <div className='flex items-center gap-5 p-3 border-b-2'>
-                        <i className="ri-map-pin-user-fill"></i>
+                        <i className="ri-map-pin-user-fill text-gonexi-primary"></i>
                         <div>
                             <h3 className='text-lg font-medium'>Pickup</h3>
                             <p className='text-sm -mt-1 text-gray-600'>{props.ride?.pickup}</p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3 border-b-2'>
-                        <i className="text-lg ri-map-pin-2-fill"></i>
+                        <i className="text-lg ri-map-pin-2-fill text-gonexi-secondary"></i>
                         <div>
                             <h3 className='text-lg font-medium'>Destination</h3>
                             <p className='text-sm -mt-1 text-gray-600'>{props.ride?.destination}</p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3'>
-                        <i className="ri-currency-line"></i>
+                        <i className="ri-currency-line text-gonexi-accent"></i>
                         <div>
                             <h3 className='text-lg font-medium'>₹{props.ride?.fare} </h3>
                             <p className='text-sm -mt-1 text-gray-600'>Cash</p>
@@ -66,7 +68,7 @@ const FinishRide = (props) => {
 
                     <button
                         onClick={endRide}
-                        className='w-full mt-5 flex  text-lg justify-center bg-green-600 text-white font-semibold p-3 rounded-lg'>Finish Ride</button>
+                        className='w-full mt-5 flex  text-lg justify-center bg-gonexi-gradient text-white font-semibold p-3 rounded-lg'>Finish Ride</button>
                 </div>
             </div>
         </div>

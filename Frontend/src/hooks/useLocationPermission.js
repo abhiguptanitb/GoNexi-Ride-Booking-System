@@ -17,7 +17,7 @@ export const useLocationPermission = () => {
 
       if (data.features && data.features.length > 0) {
         const address = data.features[0].place_name
-        console.log("📍 Address found:", address)
+        // console.log("📍 Address found:", address)
         return address
       }
       return null
@@ -72,7 +72,7 @@ export const useLocationPermission = () => {
             setCurrentAddress(address)
           }
 
-          console.log("✅ Location permission granted:", { location, address })
+          // console.log("✅ Location permission granted:", { location, address })
           resolve({ location, address })
         },
         (error) => {

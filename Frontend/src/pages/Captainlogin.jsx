@@ -43,47 +43,74 @@ const Captainlogin = () => {
     };
 
     return (
-        <div className='p-7 h-screen flex flex-col justify-between mt-3'>
-            <div>
-                <img className='w-20 mb-3' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="" />
+        <div className="min-h-screen bg-gonexi-gradient-light flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl shadow-gonexi-lg p-8 w-full max-w-md">
+                {/* Logo and branding */}
+                <div className="text-center mb-8">
+                    <div className="w-20 h-20 bg-gonexi-gradient rounded-2xl flex items-center justify-center shadow-gonexi-lg mx-auto mb-4">
+                        <i className="ri-steering-2-line text-white text-3xl"></i>
+                    </div>
+                    <h1 className="text-2xl font-bold text-gray-800 mb-2">Welcome to GoNexi</h1>
+                    <p className="text-gray-600">Sign in as a driver</p>
+                </div>
 
-                <form onSubmit={(e) => submitHandler(e)}>
-                    <h3 className='text-lg font-medium mb-2'>What's your email</h3>
-                    <input
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className='bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base'
-                        type="email"
-                        placeholder='email@example.com'
-                    />
+                <form onSubmit={(e) => submitHandler(e)} className="space-y-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gonexi-primary focus:border-transparent transition-all duration-200"
+                            type="email"
+                            placeholder="Enter your email"
+                        />
+                    </div>
 
-                    <h3 className='text-lg font-medium mb-2'>Enter Password</h3>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gonexi-primary focus:border-transparent transition-all duration-200"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            type="password"
+                            placeholder="Enter your password"
+                        />
+                    </div>
 
-                    <input
-                        className='bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base'
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        type="password"
-                        placeholder='password'
-                    />
-
-                    {error && <p className='text-red-500 text-sm mb-4'>{error}</p>}
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+                            <p className="text-red-600 text-sm">{error}</p>
+                        </div>
+                    )}
 
                     <button
-                        className='bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base'
-                    >Login</button>
-
+                        type="submit"
+                        className="w-full bg-gonexi-gradient text-white font-semibold py-3 rounded-xl shadow-gonexi hover:shadow-gonexi-lg transform hover:scale-105 transition-all duration-200"
+                    >
+                        Sign In as Driver
+                    </button>
                 </form>
-                <p className='text-center'>Join a fleet? <Link to='/captain-signup' className='text-blue-600'>Register as a Captain</Link></p>
-            </div>
 
-            <div>
-                <Link
-                    to='/login'
-                    className='bg-[#d5622d] flex items-center justify-center text-white font-semibold mb-5 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base'
-                >Sign in as User</Link>
+                <div className="mt-6 text-center">
+                    <p className="text-gray-600">
+                        New driver? {" "}
+                        <Link to="/captain-signup" className="text-gonexi-primary font-semibold hover:underline">
+                            Register as Driver
+                        </Link>
+                    </p>
+                </div>
+
+                <div className="mt-8">
+                    <Link
+                        to="/login"
+                        className="w-full bg-gonexi-secondary text-white font-semibold py-3 rounded-xl flex items-center justify-center shadow-gonexi hover:shadow-gonexi-lg transform hover:scale-105 transition-all duration-200"
+                    >
+                        <i className="ri-user-line mr-2"></i>
+                        Sign in as Passenger
+                    </Link>
+                </div>
             </div>
         </div>
     );

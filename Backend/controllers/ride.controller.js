@@ -82,7 +82,7 @@ module.exports.createRide = async (req, res) => {
     }
 }
 
-    module.exports.getFare = async (req, res) => {
+module.exports.getFare = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })
@@ -98,7 +98,7 @@ module.exports.createRide = async (req, res) => {
     }
 }
 
-    module.exports.confirmRide = async (req, res) => {
+module.exports.confirmRide = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })
@@ -121,7 +121,7 @@ module.exports.createRide = async (req, res) => {
     }
 }
 
-    module.exports.startRide = async (req, res) => {
+module.exports.startRide = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })
@@ -145,7 +145,7 @@ module.exports.createRide = async (req, res) => {
     }
 }
 
-    module.exports.endRide = async (req, res) => {
+module.exports.endRide = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })

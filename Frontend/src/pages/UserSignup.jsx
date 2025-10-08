@@ -71,10 +71,18 @@ const UserSignup = () => {
     };
 
     return (
-        <div className='mt-3'>
+        <div className='mt-3 bg-gonexi-gradient-light'>
             <div className='p-7 h-screen flex flex-col justify-between'>
                 <div>
-                    <img className='w-16 mb-10' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYQy-OIkA6In0fTvVwZADPmFFibjmszu2A0g&s" alt="" />
+                    <div className="flex items-center mb-10">
+                        <div className="w-16 h-16 bg-gonexi-gradient rounded-2xl flex items-center justify-center shadow-gonexi-lg mr-4">
+                            <span className="text-white font-bold text-2xl">G</span>
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-bold text-gray-800">GoNexi</h1>
+                            <p className="text-sm text-gray-600">Join as a passenger</p>
+                        </div>
+                    </div>
 
                     <form onSubmit={(e) => submitHandler(e)}>
                         <h3 className='text-lg w-1/2 font-medium mb-2'>What's your name</h3>
@@ -125,11 +133,11 @@ const UserSignup = () => {
                         </div>
 
                         <button
-                            className='bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base'
+                            className='bg-gonexi-gradient text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base'
                         >Create account</button>
 
                     </form>
-                    <p className='text-center'>Already have an account? <Link to='/login' className='text-blue-600'>Login here</Link></p>
+                    <p className='text-center'>Already have an account? <Link to='/login' className='text-gonexi-primary'>Login here</Link></p>
                 </div>
 
                 <div>

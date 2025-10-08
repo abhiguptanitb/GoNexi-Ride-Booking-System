@@ -27,11 +27,15 @@ const CaptainRiding = () => {
     return (
         <div className='relative h-screen flex flex-col w-full'>
             <div className='fixed top-0 p-6 flex items-center justify-between z-20'>
-                <img
-                    className='w-16'
-                    src='https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png'
-                    alt=''
-                />
+                <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gonexi-gradient rounded-xl flex items-center justify-center shadow-gonexi">
+                        <i className="ri-steering-2-line text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 className="text-white text-lg font-bold">GoNexi Driver</h1>
+                        <p className="text-white/80 text-xs">Ride in Progress</p>
+                    </div>
+                </div>
             </div>
             
 
@@ -39,15 +43,15 @@ const CaptainRiding = () => {
                 <LiveTracking />
             </div>
 
-            <div className='h-[20%] p-4 flex items-center justify-between relative bg-yellow-400 shadow-md rounded-t-lg'>
+            <div className='h-[20%] p-4 flex items-center justify-between relative bg-gonexi-gradient shadow-gonexi-lg rounded-t-lg'>
                 <div className='flex items-center gap-2'>
-                    <i className='text-3xl text-gray-800 ri-map-pin-line'></i>
+                    <i className='text-3xl text-white ri-map-pin-line'></i>
                     <div>
-                        <h4 className='text-lg font-bold text-gray-800'>Ride in Progress</h4>
+                        <h4 className='text-lg font-bold text-white'>Ride in Progress</h4>
                     </div>
                 </div>
                 <button
-                    className='bg-green-600 hover:bg-green-700 transition-all duration-300 text-white font-semibold py-2 px-6 rounded-lg shadow'
+                    className='bg-white hover:bg-gray-100 transition-all duration-300 text-gonexi-primary font-semibold py-2 px-6 rounded-lg shadow-gonexi'
                     onClick={() => setFinishRidePanel(true)}
                 >
                     Complete Ride

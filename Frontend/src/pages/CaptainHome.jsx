@@ -29,7 +29,7 @@ const CaptainHome = () => {
   useEffect(() => {
     const initializeLocation = async () => {
       try {
-        console.log("🚗 Initializing location for captain...")
+        // console.log("🚗 Initializing location for captain...")
         await requestLocationPermission()
       } catch (error) {
         console.error("Failed to get initial location:", error)
@@ -42,7 +42,7 @@ const CaptainHome = () => {
 
   // Handle location updates from LiveTracking component
   const handleLocationUpdate = (location) => {
-    console.log("📍 Captain location updated:", location)
+    // console.log("📍 Captain location updated:", location)
 
     // Send location to server via socket
     socket.emit("update-location-captain", {
@@ -110,7 +110,7 @@ const CaptainHome = () => {
       })
 
       setVehicleType(response.data.vehicleType)
-      console.log("🚗 Captain vehicle type:", response.data.vehicleType)
+          // console.log("🚗 Captain vehicle type:", response.data.vehicleType)
     } catch (error) {
       console.error("Error fetching vehicle type:", error)
     }
@@ -122,13 +122,13 @@ const CaptainHome = () => {
 
   useEffect(() => {
     socket.on("new-ride", (data) => {
-      console.log("🔔 New ride received:", data)
-      const isMatching = data.vehicleType === vehicleType
-      console.log("🔍 Vehicle type match:", {
-        rideVehicleType: data.vehicleType,
-        captainVehicleType: vehicleType,
-        isMatching,
-      })
+        // console.log("🔔 New ride received:", data)
+        const isMatching = data.vehicleType === vehicleType
+        // console.log("🔍 Vehicle type match:", {
+        //   rideVehicleType: data.vehicleType,
+        //   captainVehicleType: vehicleType,
+        //   isMatching,
+        // })
 
       setRide({ ...data, vehicleType: data.vehicleType || vehicleType })
       setRidePopupPanel(isMatching)
@@ -156,7 +156,7 @@ const CaptainHome = () => {
 
       setRidePopupPanel(false)
       setConfirmRidePopupPanel(true)
-      console.log("✅ Ride confirmed")
+          // console.log("✅ Ride confirmed")
     } catch (error) {
       console.error("❌ Error confirming ride:", error)
     }
@@ -191,13 +191,18 @@ const CaptainHome = () => {
   return (
     <div className="h-screen relative overflow-hidden z-0 w-full">
       <div className="absolute p-6 top-0 flex items-center justify-between w-full">
-        <img
-          className="w-16 z-20"
-          src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
-          alt=""
-        />
-        <Link onClick={handleLogout} className="h-10 w-10 z-20 bg-white flex items-center justify-center rounded-full">
-          <i className="text-lg font-medium ri-logout-box-r-line"></i>
+        <div className="flex items-center space-x-3 z-20">
+          <div className="w-12 h-12 bg-gonexi-gradient rounded-xl flex items-center justify-center shadow-gonexi">
+            <i className="ri-steering-2-line text-white text-xl"></i>
+          </div>
+            <div>
+              <h1 className="text-white text-lg font-bold">GoNexi Driver</h1>
+              <p className="text-white/80 text-xs">Ready to drive</p>
+            </div>
+        </div>
+        
+        <Link onClick={handleLogout} className="h-10 w-10 z-20 bg-white/90 backdrop-blur-sm flex items-center justify-center rounded-full shadow-gonexi hover:shadow-gonexi-lg transition-all duration-200">
+          <i className="text-lg font-medium ri-logout-box-r-line text-gray-700"></i>
         </Link>
       </div>
 

@@ -1,4 +1,4 @@
-# 🚗 Uber Clone
+# 🚗 GoNexi
 
 <div align="center">
 
@@ -26,7 +26,6 @@
 - [Configuration](#-configuration)
 - [Usage](#-usage)
 - [API Documentation](#-api-documentation)
-- [Screenshots](#-screenshots)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -34,7 +33,7 @@
 
 ## 🎯 Overview
 
-This is a comprehensive **Uber Clone** application that replicates the core functionality of a ride-sharing platform. The project features separate interfaces for **users** (riders) and **captains** (drivers), real-time location tracking, ride booking, fare calculation, and seamless communication between users and drivers using WebSocket technology.
+This is a comprehensive **GoNexi** application that replicates the core functionality of a ride-sharing platform. The project features separate interfaces for **users** (riders) and **captains** (drivers), real-time location tracking, ride booking, fare calculation, and seamless communication between users and drivers using WebSocket technology.
 
 ### Key Highlights
 
@@ -110,7 +109,7 @@ This is a comprehensive **Uber Clone** application that replicates the core func
 ## 📁 Project Structure
 
 ```
-uber-clone/
+GoNexi/
 │
 ├── Backend/
 │   ├── controllers/          # Route controllers
@@ -178,7 +177,7 @@ uber-clone/
 
 ```bash
 git clone https://github.com/abhiguptanitb/GoNexi-Ride-Booking-System.git
-cd uber-clone
+cd GoNexi-Ride-Booking-System
 ```
 
 ### Step 2: Backend Setup
@@ -217,8 +216,8 @@ Create a `.env` file in the `Backend` directory:
 
 ```env
 # Database
-DB_CONNECT=mongodb://localhost:27017/uber-clone
-# or use MongoDB Atlas: mongodb+srv://username:password@cluster.mongodb.net/uber-clone
+DB_CONNECT=mongodb://localhost:27017/GoNexi-Ride-Booking-System
+# or use MongoDB Atlas: mongodb+srv://username:password@cluster.mongodb.net/GoNexi-Ride-Booking-System
 
 # JWT Secret (use a strong random string)
 JWT_SECRET=your_super_secret_jwt_key_here
@@ -386,7 +385,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 👨‍💻 Author
 
-**Your Name**
+**Abhi Gupta**
 
 - GitHub: [@abhiguptanitb](https://github.com/abhiguptanitb)
 - LinkedIn: [abhiguptanitb](https://linkedin.com/in/abhiguptanitb)

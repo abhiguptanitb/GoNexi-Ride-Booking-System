@@ -78,7 +78,8 @@ module.exports.createRide = async (req, res) => {
     res.status(201).json(ride)
     } catch (err) {
         console.log(err)
-        return res.status(500).json({ message: err.message })
+        const statusCode = err.message === 'Complete your pending ride payment before booking another ride' ? 409 : 500
+        return res.status(statusCode).json({ message: err.message })
     }
 }
 
@@ -183,6 +184,21 @@ module.exports.getRideById = async (req, res) => {
     } catch (err) {
         const statusCode = err.message === 'Ride not found' ? 404 : 500
         return res.status(statusCode).json({ message: err.message })
+    }
+}
+
+module.exports.getPendingPaymentRide = async (req, res) => {
+    try {
+        const ride = await rideService.findPendingPaymentRideForUser({
+            userId: req.user._id,
+        })
+
+        return res.status(200).json({
+            hasPendingPayment: Boolean(ride),
+            ride,
+        })
+    } catch (err) {
+        return res.status(500).json({ message: err.message })
     }
 }
 

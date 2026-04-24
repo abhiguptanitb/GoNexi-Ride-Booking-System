@@ -37,6 +37,10 @@ const Home = () => {
   const [vehicleType, setVehicleType] = useState(localStorage.getItem("vehicleType") || null)
   const [ride, setRide] = useState(null)
   const [isPickupFromCurrentLocation, setIsPickupFromCurrentLocation] = useState(false)
+  const [pendingPaymentRide, setPendingPaymentRide] = useState(() => {
+    const storedRide = localStorage.getItem("pendingPaymentRide")
+    return storedRide ? JSON.parse(storedRide) : null
+  })
 
   const navigate = useNavigate()
   const { socket } = useContext(SocketContext)
@@ -174,6 +178,31 @@ const Home = () => {
     }
   }, [socket, navigate])
 
+  useEffect(() => {
+    const fetchPendingPaymentRide = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/payment/pending`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+
+        if (response.data?.hasPendingPayment && response.data?.ride) {
+          setPendingPaymentRide(response.data.ride)
+          localStorage.setItem("pendingPaymentRide", JSON.stringify(response.data.ride))
+          return
+        }
+
+        setPendingPaymentRide(null)
+        localStorage.removeItem("pendingPaymentRide")
+      } catch (error) {
+        console.error("Error fetching pending payment ride:", error)
+      }
+    }
+
+    fetchPendingPaymentRide()
+  }, [])
+
   const handlePickupChange = async (e) => {
     const value = e.target.value
     setPickup(value)
@@ -294,6 +323,11 @@ const Home = () => {
   }, [waitingForDriver])
 
   const findTrip = async () => {
+    if (pendingPaymentRide?._id) {
+      navigate(`/riding?ride_id=${pendingPaymentRide._id}`)
+      return
+    }
+
     if (!pickup || !destination) {
       alert("Please enter both pickup and destination locations.")
       return
@@ -316,6 +350,11 @@ const Home = () => {
   }
 
   const createRide = async () => {
+    if (pendingPaymentRide?._id) {
+      navigate(`/riding?ride_id=${pendingPaymentRide._id}`)
+      return
+    }
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/rides/create`,
@@ -356,6 +395,7 @@ const Home = () => {
       localStorage.removeItem("vehicleType")
       localStorage.removeItem("isPickupFromCurrentLocation")
       localStorage.removeItem("activeRide")
+      localStorage.removeItem("pendingPaymentRide")
       navigate("/login")
     } catch (error) {
       console.error("Error logging out:", error)
@@ -373,7 +413,7 @@ const Home = () => {
   }, [panelOpen])
 
   return (
-    <div className="h-screen relative overflow-hidden z-0 w-full">
+    <div className="h-screen relative overflow-hidden z-0 w-full bg-gray-50">
       <div className="absolute p-6 top-0 flex items-center justify-between w-full">
         <div className="flex items-center space-x-3 z-20">
           <div className="w-12 h-12 bg-gonexi-gradient rounded-xl flex items-center justify-center shadow-gonexi">
@@ -389,12 +429,12 @@ const Home = () => {
         </Link>
       </div>
 
-      <div className={`h-3/5 ${liveTrackingZIndex}`}>
+      <div className={`h-[55vh] ${liveTrackingZIndex}`}>
         <LiveTracking onLocationUpdate={handleLocationUpdate} />
       </div>
 
       <div className={`flex flex-col justify-end absolute top-0 h-full w-full ${panelZIndex}`}>
-        <div className="h-[35%] p-6 bg-white relative">
+        <div className="h-[45vh] min-h-0 rounded-t-[32px] p-6 bg-white relative overflow-hidden shadow-[0_-18px_40px_-28px_rgba(15,23,42,0.35)]">
           <h5
             ref={panelCloseRef}
             onClick={() => {
@@ -405,6 +445,26 @@ const Home = () => {
             <i className="ri-arrow-down-wide-line"></i>
           </h5>
           <h4 className="text-2xl font-semibold">Find a trip</h4>
+          {pendingPaymentRide?._id && (
+            <button
+              type="button"
+              onClick={() => navigate(`/riding?ride_id=${pendingPaymentRide._id}`)}
+              className="mt-4 w-full rounded-2xl border border-orange-200 bg-orange-50 px-4 py-4 text-left text-orange-800 shadow-sm transition-colors hover:bg-orange-100"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold">Pending payment required</p>
+                  <p className="mt-1 text-sm leading-6">
+                    You still have an unpaid ride. Complete that payment before booking another ride.
+                  </p>
+                  <p className="mt-1 text-xs text-orange-700">
+                    Driver: {pendingPaymentRide?.captain?.fullname?.firstname} | Fare: Rs. {pendingPaymentRide?.fare}
+                  </p>
+                </div>
+                <i className="ri-arrow-right-line text-lg"></i>
+              </div>
+            </button>
+          )}
           <form
             className="relative py-3"
             onSubmit={(e) => {
@@ -441,10 +501,10 @@ const Home = () => {
           </form>
 
           <button onClick={findTrip} className="bg-gonexi-gradient text-white px-4 py-3 rounded-xl mt-4 w-full font-semibold shadow-gonexi hover:shadow-gonexi-lg transform hover:scale-105 transition-all duration-200">
-            Find Your Ride
+            {pendingPaymentRide?._id ? 'Complete Pending Payment' : 'Find Your Ride'}
           </button>
         </div>
-        <div ref={panelRef} className="bg-white z-10">
+        <div ref={panelRef} className="bg-white z-10 overflow-y-auto overscroll-contain">
           <LocationSearchPanel
             suggestions={activeField === "pickup" ? pickupSuggestions : destinationSuggestions}
             setPanelOpen={setPanelOpen}
@@ -457,7 +517,7 @@ const Home = () => {
       </div>
 
       {vehiclePanel && (
-        <div ref={vehiclePanelRef} className="w-full absolute z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12">
+        <div ref={vehiclePanelRef} className="w-full absolute z-10 bottom-0 max-h-[88vh] translate-y-full overflow-y-auto rounded-t-[32px] bg-white px-3 py-6 pt-12 shadow-[0_-18px_40px_-28px_rgba(15,23,42,0.45)]">
           <VehiclePanel
             selectVehicle={setVehicleType}
             fare={fare}
@@ -470,7 +530,7 @@ const Home = () => {
       {confirmRidePanel && (
         <div
           ref={confirmRidePanelRef}
-          className="w-full absolute z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12"
+          className="w-full absolute z-10 bottom-0 max-h-[88vh] translate-y-full overflow-y-auto rounded-t-[32px] bg-white px-3 py-6 pt-12 shadow-[0_-18px_40px_-28px_rgba(15,23,42,0.45)]"
         >
           <ConfirmRide
             createRide={createRide}
@@ -485,7 +545,7 @@ const Home = () => {
       )}
 
       {vehicleFound && (
-        <div ref={vehicleFoundRef} className="w-full absolute z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12">
+        <div ref={vehicleFoundRef} className="w-full absolute z-10 bottom-0 max-h-[88vh] translate-y-full overflow-y-auto rounded-t-[32px] bg-white px-3 py-6 pt-12 shadow-[0_-18px_40px_-28px_rgba(15,23,42,0.45)]">
           <LookingForDriver
             createRide={createRide}
             pickup={pickup}
@@ -498,7 +558,7 @@ const Home = () => {
       )}
 
       {waitingForDriver && (
-        <div ref={waitingForDriverRef} className="w-full absolute z-10 bottom-0  bg-white px-3 py-6 pt-12">
+        <div ref={waitingForDriverRef} className="w-full absolute z-10 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-[32px] bg-white px-3 py-6 pt-12 shadow-[0_-18px_40px_-28px_rgba(15,23,42,0.45)]">
           <WaitingForDriver
             ride={ride}
             setVehicleFound={setVehicleFound}

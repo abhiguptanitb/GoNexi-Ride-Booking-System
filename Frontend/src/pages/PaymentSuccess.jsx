@@ -35,6 +35,7 @@ const PaymentSuccess = () => {
                 if (response.data.paymentStatus === 'paid') {
                     setMessage('Payment successful. Redirecting you to your home page...')
                     localStorage.removeItem('activeRide')
+                    localStorage.removeItem('pendingPaymentRide')
 
                     setTimeout(() => {
                         navigate('/home')

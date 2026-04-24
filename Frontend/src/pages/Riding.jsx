@@ -77,6 +77,7 @@ const Riding = () => {
 
             if (updatedRide?.paymentStatus === 'paid') {
                 localStorage.removeItem('activeRide')
+                localStorage.removeItem('pendingPaymentRide')
                 navigate('/home')
                 return
             }
@@ -110,10 +111,12 @@ const Riding = () => {
 
             if (response.data.ride) {
                 persistRide(response.data.ride)
+                localStorage.setItem('pendingPaymentRide', JSON.stringify(response.data.ride))
             }
 
             if (response.data.alreadyPaid) {
                 localStorage.removeItem('activeRide')
+                localStorage.removeItem('pendingPaymentRide')
                 navigate('/home')
                 return
             }

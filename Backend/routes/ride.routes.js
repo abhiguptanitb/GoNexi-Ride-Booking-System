@@ -52,6 +52,11 @@ router.get('/payment/verify',
     rideController.verifyCheckoutSession
 )
 
+router.get('/payment/pending',
+    authMiddleware.authUser,
+    rideController.getPendingPaymentRide
+)
+
 router.get('/:rideId',
     authMiddleware.authUser,
     param('rideId').isMongoId().withMessage('Invalid ride id'),

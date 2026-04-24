@@ -60,6 +60,16 @@ module.exports.createRide = async ({
         throw new Error('All fields are required');
     }
 
+    const pendingPaymentRide = await rideModel.findOne({
+        user,
+        status: 'completed',
+        paymentStatus: { $in: ['unpaid', 'pending', 'failed'] },
+    }).sort({ completedAt: -1, updatedAt: -1, createdAt: -1 });
+
+    if (pendingPaymentRide) {
+        throw new Error('Complete your pending ride payment before booking another ride');
+    }
+
     const fare = await getFare(pickup, destination);
 
     const ride = rideModel.create({
@@ -179,6 +189,20 @@ module.exports.findRideForUser = async ({ rideId, userId }) => {
     if (!ride) {
         throw new Error('Ride not found');
     }
+
+    return ride;
+}
+
+module.exports.findPendingPaymentRideForUser = async ({ userId }) => {
+    if (!userId) {
+        throw new Error('User id is required');
+    }
+
+    const ride = await rideModel.findOne({
+        user: userId,
+        status: 'completed',
+        paymentStatus: { $in: ['unpaid', 'pending', 'failed'] },
+    }).populate('user').populate('captain').sort({ completedAt: -1, updatedAt: -1, createdAt: -1 });
 
     return ride;
 }

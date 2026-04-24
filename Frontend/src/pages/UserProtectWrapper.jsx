@@ -20,9 +20,27 @@ const UserProtectWrapper = ({
             headers: {
                 Authorization: `Bearer ${token}`
             }
-        }).then(response => {
+        }).then(async response => {
             if (response.status === 200) {
                 setUser(response.data)
+
+                try {
+                    const pendingPaymentResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/payment/pending`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    })
+
+                    if (pendingPaymentResponse.data?.hasPendingPayment && pendingPaymentResponse.data?.ride) {
+                        localStorage.setItem('pendingPaymentRide', JSON.stringify(pendingPaymentResponse.data.ride))
+                    } else {
+                        localStorage.removeItem('pendingPaymentRide')
+                    }
+                } catch (pendingPaymentError) {
+                    console.error('Pending payment route is unavailable:', pendingPaymentError)
+                    localStorage.removeItem('pendingPaymentRide')
+                }
+
                 setIsLoading(false)
             }
         })
@@ -31,7 +49,7 @@ const UserProtectWrapper = ({
                 localStorage.removeItem('token')
                 navigate('/login')
             })
-    }, [ token ])
+    }, [ token, navigate, setUser ])
 
     if (isLoading) {
         return (

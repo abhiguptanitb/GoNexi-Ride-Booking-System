@@ -1,0 +1,120 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { CaptainDataContext } from '../context/CaptainContext';
+
+const Captainlogin = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(''); 
+
+    const { setCaptain } = React.useContext(CaptainDataContext);
+    const navigate = useNavigate();
+
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        const captain = {
+            email: email,
+            password
+        };
+
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/login`, captain);
+
+            if (response.status === 200) {
+                const data = response.data;
+
+                setCaptain(data.captain);
+                localStorage.setItem('token', data.token);
+                navigate('/captain-home');
+
+            }
+        } catch (err) {
+            if (err.response && err.response.status === 401) {
+                setError("Invalid email or password. Please try again.");
+            } else {
+                setError("An error occurred. Please try again later.");
+            }
+        }
+        
+        setEmail('');
+        setPassword('');
+    };
+
+    return (
+        <div className="min-h-screen bg-gonexi-gradient-light flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl shadow-gonexi-lg p-8 w-full max-w-md">
+                {/* Logo and branding */}
+                <div className="text-center mb-8">
+                    <div className="w-20 h-20 bg-gonexi-gradient rounded-2xl flex items-center justify-center shadow-gonexi-lg mx-auto mb-4">
+                        <i className="ri-steering-2-line text-white text-3xl"></i>
+                    </div>
+                    <h1 className="text-2xl font-bold text-gray-800 mb-2">Welcome to GoNexi</h1>
+                    <p className="text-gray-600">Sign in as a driver</p>
+                </div>
+
+                <form onSubmit={(e) => submitHandler(e)} className="space-y-6">
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gonexi-primary focus:border-transparent transition-all duration-200"
+                            type="email"
+                            placeholder="Enter your email"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gonexi-primary focus:border-transparent transition-all duration-200"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            type="password"
+                            placeholder="Enter your password"
+                        />
+                    </div>
+
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+                            <p className="text-red-600 text-sm">{error}</p>
+                        </div>
+                    )}
+
+                    <button
+                        type="submit"
+                        className="w-full bg-gonexi-gradient text-white font-semibold py-3 rounded-xl shadow-gonexi hover:shadow-gonexi-lg transform hover:scale-105 transition-all duration-200"
+                    >
+                        Sign In as Driver
+                    </button>
+                        </form>
+
+                <div className="mt-6 text-center">
+                    <p className="text-gray-600">
+                        New driver? {" "}
+                        <Link to="/captain-signup" className="text-gonexi-primary font-semibold hover:underline">
+                            Register as Driver
+                        </Link>
+                    </p>
+                </div>
+
+                <div className="mt-8">
+                    <Link
+                        to="/login"
+                        className="w-full bg-gonexi-secondary text-white font-semibold py-3 rounded-xl flex items-center justify-center shadow-gonexi hover:shadow-gonexi-lg transform hover:scale-105 transition-all duration-200"
+                    >
+                        <i className="ri-user-line mr-2"></i>
+                        Sign in as Passenger
+                    </Link>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Captainlogin;

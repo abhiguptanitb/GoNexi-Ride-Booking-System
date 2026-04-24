@@ -17,6 +17,7 @@ const CaptainHome = () => {
   const [vehicleType, setVehicleType] = useState(null)
   const [earningsToday, setEarningsToday] = useState(0)
   const [ridesToday, setRidesToday] = useState(0)
+  const [paidRidesToday, setPaidRidesToday] = useState(0)
   const ridePopupPanelRef = useRef(null)
   const confirmRidePopupPanelRef = useRef(null)
   const [ride, setRide] = useState(null)
@@ -117,6 +118,7 @@ const CaptainHome = () => {
 
       setEarningsToday(response.data.earningsToday || 0)
       setRidesToday(response.data.ridesToday || 0)
+      setPaidRidesToday(response.data.paidRidesToday || 0)
     } catch (error) {
       console.error("Error fetching captain earnings:", error)
     }
@@ -227,6 +229,7 @@ const CaptainHome = () => {
         vehicleType={vehicleType}
         earningsToday={earningsToday}
         ridesToday={ridesToday}
+        paidRidesToday={paidRidesToday}
       />
 
       {/* Ride Popup */}

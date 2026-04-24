@@ -5,6 +5,7 @@ const CaptainDetails = (props) => {
     const { captain } = useContext(CaptainDataContext)
     const earningsToday = props.earningsToday ?? 0
     const ridesToday = props.ridesToday ?? 0
+    const paidRidesToday = props.paidRidesToday ?? 0
 
     return (
         <div className="w-full rounded-[28px] bg-white/95 p-4 shadow-gonexi-lg backdrop-blur sm:p-6">
@@ -71,8 +72,8 @@ const CaptainDetails = (props) => {
                         <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-gonexi-secondary">
                             <i className="ri-speed-up-line text-white text-lg"></i>
                         </div>
-                        <h5 className='text-lg font-semibold text-gray-800'>{ridesToday}</h5>
-                        <p className='text-xs leading-4 text-gray-600'>Rides Today</p>
+                        <h5 className='text-lg font-semibold text-gray-800'>{paidRidesToday}/{ridesToday}</h5>
+                        <p className='text-xs leading-4 text-gray-600'>Paid / Total Rides</p>
                     </div>
                     <div className='rounded-2xl bg-gray-50 px-2 py-4 text-center sm:px-4'>
                         <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-gonexi-accent">

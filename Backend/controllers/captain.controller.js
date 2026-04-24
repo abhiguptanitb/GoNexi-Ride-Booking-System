@@ -157,6 +157,11 @@ module.exports.getCaptainEarnings = async (req, res, next) => {
                 $group: {
                     _id: null,
                     ridesToday: { $sum: 1 },
+                    paidRidesToday: {
+                        $sum: {
+                            $cond: [{ $eq: ['$paymentStatus', 'paid'] }, 1, 0],
+                        },
+                    },
                 },
             },
         ]);
@@ -164,6 +169,7 @@ module.exports.getCaptainEarnings = async (req, res, next) => {
         res.status(200).json({
             earningsToday: earningsStats[0]?.earningsToday || 0,
             ridesToday: ridesStats[0]?.ridesToday || 0,
+            paidRidesToday: ridesStats[0]?.paidRidesToday || 0,
         });
     } catch (error) {
         console.error(error);
